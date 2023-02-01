@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet"> 
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+<header class="head-line">
+    <h1>Roy Marcelino</h1>
+    <h2>rcomarceli@gmail.com - (757) 352-1251 - Richmond, VA</h2>
+</header>
+<div>
+    <header class="header-border"><h3>Work Experience</h3></header>
+    <div class="title-date">
+        <p><b>Dominion Voice and Data</b><em> (Network Engineer)</em></p>
+        <p class="right"><b>July 2021 - October 2022</b></p>
+    </div>
+    <p class="title-bottom"><em>Richmond, VA</em></p>
+    <ul>
+        <li>
+            Managed company's first foray into Devops by creating the Org. Github, code, and NOC 
+            processes necessary to solve a business need to gather metrics/configurations for sites that could
+            not be monitored otherwise due to resource constraints (See ADTRAN script below)
+        </li>
+        <li>
+            Became a primary escalation contact for network issues including security services and 
+            hardware, encompassing cloud/branch office tunnels and Watchguard firewall configurations
+        </li>
+        <li>
+            Supported System Administration tech, such as server configuration, active directory, and AD 
+            integration needed to support security software (Watchguard Authpoint, etc.).            
+        </li>
+    </ul>
+</div>
+<div>
+    <div>
+        <div class="title-date">
+            <p><b>Navy Marine Corps Intranet</b><em> (Tier 2 Network Engineer)</em></p>
+            <p class="right"><b>Jan 2020 - July 2021</b></p>
+        </div>
+        <p class="title-bottom"><em>Norfolk, VA</em></p>
+        <ul>
+            <li>
+                Resolved enterprise-impacting outages for NMCI, the network backbone for the US Navy, and
+                performed network upgrades remotely with technicians on-site
+            </li>
+            <li>
+                Extensive experience with multivendor networks and WAN topologies, including VPNs, WAN 
+                accelerators, Route Reflectors, Firewalls, IPS's, AP Wireless Controllers, IPSEC, MPLS
+            </li>
+            <li>
+                Developed a script that automated reports/metrics gathering for WAN circuit utilization, which 
+                saw wide-spread adoption across different shifts due to efficiency and ease-of-use
+            </li>
+        </ul>
+    </div>
+</div>
+<div>
+    <header class="header-border"><h3>Projects</h3></header>
+    <div class="title-date">
+        <p><b>ADTRAN Switch Config and Metrics Gathering Script </b></p>
+    </div>
+    <p class="title-bottom"><em>Created for Dominion Voice and Data (Python, Scrapli, TextFSM, Onedrive API)</em></p>
+    <ul>
+        <li>
+            Concurrently SSHs into a range of IPs used by ADTRAN switches.
+        </li>
+        <li>
+            Uses custom-built templates to grab certain metrics (CPU usage, temperature, etc) from show 
+            commands
+        </li>
+        <li>
+            Outputs metrics for each device in a spreadsheet as well as automatically uploads a copy an up-to-date startup config to Business OneDrive if needed. 
+        </li>
+    </ul>
+    <div class="title-date">
+        <p><b>Voice Acting Discord Bot</b></p>
+    </div>
+    <p class="title-bottom"><em>github.com/Rcomarceli/Actor (working test bot available!)</em></p>
+    <ul>
+        <li>
+            Chatbot for the VOIP/IM platform "Discord"
+        </li>
+        <li>
+            Supports voice acting communities by querying for screenplays stored as Google Docs, storing 
+            them in a SQL database, and allowing users to fetch the script URLs in real-time via chat 
+            commands.
+        </li>
+    </ul>
+</div>
+<div>
+    <header class="header-border"><h3>Education</h3></header>
+    <div class="title-date">
+        <p><b>Old Dominion University</b></p>
+        <p class="right"><b>Fall 2013 - Fall 2017</b></p>
+    </div>
+    <em>
+        <p class="title-bottom">Bachelor of Science in Applied Mathematics</p>
+        <p class="title-bottom">Norfolk, VA</p>
+    </em>
+    <ul>
+        <li>Spring 2016: Studied abroad in Japan at Ritsumeikan Asia Pacific University</li>
+        <ul>
+            <li>Qualified for Advanced Level Japanese due to placement test.</li>
+            <li>Enrolled into business/language classes taught solely in Japanese.</li>
+        </ul>
+    </ul>
+</div>
+<div>
+    <header class="header-border"><h3>Certifications/Skills & Interests</h3></header>
+    <ul>
+        <li>Certifications: Cisco CCNA, Comptia Security+, JLPT N1</li>
+        <li> Skills: Fluent in Japanese, Routing & Switching, Programming (Python, Javascript, VBScript), SQL, 
+            Network Automation, Cisco Collaboration, VPN Tunnels, Detailed Documentation</li>
+        <li>Interests: Breakdancing, Esports, Perfecting Kimchi and Ramen Recipes, Game Design</li>
+    </ul>
+</div>
+
+<p>visitor count is: <span id='visitorCount' data-cy="visitorCount"></span></p>
+
+<button onclick='switchMode()'>Toggle Dark Mode</button>
+
+<script data-cy="script" type="text/javascript">
+    var API_URL = "https://4ajl4m3d5a.execute-api.us-east-1.amazonaws.com/serverless_lambda_stage/updateVisitorCounter";
+    async function submit() {
+       let res = await fetch(API_URL, options = {method: 'POST'});
+       let data = await res.json();
+       let element = document.getElementById('visitorCount');
+       element.innerHTML += data;
+       return;
+    }
+
+    function switchMode() {
+        let element = document.body;
+        element.classList.toggle('dark-mode');
+        return;
+    }
+
+    submit();
+</script>
+</body>
+</html>
