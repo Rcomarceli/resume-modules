@@ -14,9 +14,9 @@ jobs:
     # needs: pre-pkr
     name: "Terraform"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./dev
+    # defaults:
+    #   run:
+    #     working-directory: ./dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3
