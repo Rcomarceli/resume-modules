@@ -20,7 +20,7 @@ terraform {
 resource "cloudflare_record" "site_cname" {
   zone_id = var.cloudflare_zone_id
   name    = var.cloudflare_domain
-  value   = aws_s3_bucket_website_configuration.application.website_endpoint
+  value   = var.website_endpoint
   type    = "CNAME"
 
   ttl     = 1
@@ -115,7 +115,7 @@ resource "cloudflare_worker_script" "change_header" {
 
   plain_text_binding {
     name = "website_endpoint"
-    text = aws_s3_bucket_website_configuration.application.website_endpoint
+    text = var.website_endpoint
   }
 
 }
@@ -130,7 +130,7 @@ resource "cloudflare_worker_route" "change_header" {
 # refactor this so we add it on to the existing bucket permissions rather than defining the entire thing
 
 resource "aws_s3_bucket_policy" "allow_access_from_cloudflare" {
-  bucket = aws_s3_bucket.application.id
+  bucket = var.website_bucket_id
   policy = data.aws_iam_policy_document.allow_access_from_cloudflare.json
 }
 
@@ -146,7 +146,7 @@ data "aws_iam_policy_document" "allow_access_from_cloudflare" {
       "s3:GetObject"
     ]
     resources = [
-      "${aws_s3_bucket.application.arn}/*"
+      "${var.website_bucket_arn}/*"
       # aws_s3_bucket.application.arn,
     ]
     condition {

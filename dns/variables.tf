@@ -33,7 +33,10 @@
 # You must provide a value for each of these parameters.
 # ---------------------------------------------------------------------------------------------------------------------
 
-
+variable "environment" {
+  description = "Environment. Either Dev or Prod"
+  type        = string
+}
 variable "cloudflare_zone_id" {
   description = "Zone ID for Cloudflare Domain"
   type        = string
@@ -53,5 +56,20 @@ variable "cloudflare_domain" {
 
 variable "cloudflare_account_id" {
   description = "The account ID for Cloudflare"
+  type        = string
+}
+
+variable "website_endpoint" {
+  description = "The website endpoint from the s3 bucket with the website code"
+  type        = string
+}
+
+variable "website_bucket_arn" {
+  description = "The ARN for the s3 bucket with the website code"
+  type        = string
+}
+
+variable "website_bucket_id" {
+  description = "ID of the website s3 bucket"
   type        = string
 }

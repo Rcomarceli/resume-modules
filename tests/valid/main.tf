@@ -40,8 +40,12 @@ module "frontend" {
 module "dns" {
   source = "../../dns"
 
+  environment           = "testing_placeholder"
   cloudflare_zone_id    = "testing_placeholder"
   cloudflare_domain     = "testing_placeholder"
   cloudflare_account_id = "testing_placeholder"
+  website_endpoint      = "testing_placeholder"
+  website_bucket_arn    = "testing_placeholder"
+  website_bucket_id     = "testing_placeholder"
 }
 
