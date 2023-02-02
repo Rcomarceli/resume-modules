@@ -171,7 +171,7 @@ data "aws_iam_policy_document" "allow_access_from_cloudflare" {
       test     = "IpAddress"
       variable = "aws:SourceIp"
 
-      values = locals.cloudflare_ip_range
+      values = local.cloudflare_ip_range
     }
   }
 }
