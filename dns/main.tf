@@ -98,24 +98,6 @@ resource "cloudflare_zone_settings_override" "application" {
   }
 }
 
-resource "cloudflare_worker_script" "change_header" {
-  account_id = var.cloudflare_account_id
-  name       = "terraform-change-resume-host-header-${var.environment}"
-  content    = file("${path.module}/cloudflare_worker/change_header.js")
-
-  plain_text_binding {
-    name = "website_endpoint"
-    text = aws_s3_bucket_website_configuration.application.website_endpoint
-  }
-
-}
-
-resource "cloudflare_worker_route" "change_header" {
-  zone_id     = var.cloudflare_zone_id
-  pattern     = "${var.cloudflare_domain}/*"
-  script_name = cloudflare_worker_script.change_header.name
-}
-
 # cloudflare worker
 # Without this, requests to the website would result in "bucket does not exist" even though the going directly to the endpoint works fine
 # The problem is that aws uses the host header to determine what the bucket should be if being redirected. in our case, it was looking for a bucket called "rcmarceli.com"
