@@ -67,7 +67,6 @@ resource "cloudflare_ruleset" "www" {
   }
 }
 
-
 # ensure API key has edit permissions for: Zone Settings
 # Looks like you encounter a bug if you attempt to use this and have an initial failure (such as permissions),
 # Once you fix the config issue, you'll run into issues where it'll flag read-only resources being attempted to be written over
@@ -85,10 +84,6 @@ resource "cloudflare_worker_script" "change_header" {
   name       = "terraform-change-resume-host-header-${var.environment}"
   content    = file("${path.module}/cloudflare_worker/change_header.js")
 
-  # kv_namespace_binding {
-  #   name         = "MY_EXAMPLE_KV_NAMESPACE"
-  #   namespace_id = cloudflare_workers_kv_namespace.my_namespace.id
-  # }
   plain_text_binding {
     name = "website_endpoint"
     text = aws_s3_bucket_website_configuration.application.website_endpoint
@@ -109,25 +104,6 @@ resource "cloudflare_worker_route" "change_header" {
 # source https://advancedweb.hu/how-to-route-to-an-arbitrary-s3-bucket-website-with-cloudflare-workers/
 # ensure that your API key has Edit Permissions: Account.Workers KV Storage?, Account.Workers Scripts, Zone.Worker Routes or else youll get Authentication errors (10000)
 
-# resource "cloudflare_workers_kv_namespace" "application" {
-#   account_id = var.cloudflare_account_id
-#   title      = "example_terraform"
-# }
-
-
-# resource "cloudflare_workers_kv_namespace" "change_header" {
-#   account_id = var.cloudflare_account_id
-#   title      = "change-header-kv"
-# }
-
-# resource "cloudflare_workers_kv" "change_header" {
-#   account_id   = var.cloudflare_account_id
-#   namespace_id = cloudflare_workers_kv_namespace.change_header.id
-#   key          = "website_endpoint"
-#   value        = aws_s3_bucket_website_configuration.application.website_endpoint
-# }
-
-
 # currently, there is no terraform support for different environments
 # we will need to append our environment variable to the name instead
 resource "cloudflare_worker_script" "change_header" {
@@ -135,10 +111,7 @@ resource "cloudflare_worker_script" "change_header" {
   name       = "terraform-change-resume-host-header-${var.environment}"
   content    = file("${path.module}/cloudflare_worker/change_header.js")
 
-  # kv_namespace_binding {
-  #   name         = "MY_EXAMPLE_KV_NAMESPACE"
-  #   namespace_id = cloudflare_workers_kv_namespace.my_namespace.id
-  # }
+
   plain_text_binding {
     name = "website_endpoint"
     text = aws_s3_bucket_website_configuration.application.website_endpoint
@@ -155,31 +128,31 @@ resource "cloudflare_worker_route" "change_header" {
 # edit bucket to allow for cloudflare access
 # refactor this so we add it on to the existing bucket permissions rather than defining the entire thing
 
-# resource "aws_s3_bucket_policy" "allow_access_from_cloudflare" {
-#   bucket = aws_s3_bucket.application.id
-#   policy = data.aws_iam_policy_document.allow_access_from_cloudflare.json
-# }
+resource "aws_s3_bucket_policy" "allow_access_from_cloudflare" {
+  bucket = aws_s3_bucket.application.id
+  policy = data.aws_iam_policy_document.allow_access_from_cloudflare.json
+}
 
-# data "aws_iam_policy_document" "allow_access_from_cloudflare" {
-#   statement {
-#     sid    = "PublicReadGetObject"
-#     effect = "Allow"
-#     principals {
-#       type        = "*"
-#       identifiers = ["*"]
-#     }
-#     actions = [
-#       "s3:GetObject"
-#     ]
-#     resources = [
-#       "${aws_s3_bucket.application.arn}/*"
-#       # aws_s3_bucket.application.arn,
-#     ]
-#     condition {
-#       test     = "IpAddress"
-#       variable = "aws:SourceIp"
+data "aws_iam_policy_document" "allow_access_from_cloudflare" {
+  statement {
+    sid    = "PublicReadGetObject"
+    effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    actions = [
+      "s3:GetObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.application.arn}/*"
+      # aws_s3_bucket.application.arn,
+    ]
+    condition {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
 
-#       values = var.cloudflare_ip_range
-#     }
-#   }
-# }
+      values = locals.cloudflare_ip_range
+    }
+  }
+}
