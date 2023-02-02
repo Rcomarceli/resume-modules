@@ -58,7 +58,7 @@ jobs:
         run: tflint --init
 
       - name: Run TFLint
-        run: tflint -f compact --force
+        run: tflint -f compact --recursive
         
       - name: Terraform Format
         id: fmt
