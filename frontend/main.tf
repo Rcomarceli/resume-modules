@@ -1,5 +1,18 @@
 
 # just have the security baked in (same for all env) for the website policy so we can test the website endpoint via github
+terraform {
+  # require any 1.x version of Terraform
+  required_version = ">= 1.0.0, < 2.0.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.52"
+    }
+  }
+
+}
+
 
 resource "aws_s3_bucket" "application" {
   bucket = var.bucket_name

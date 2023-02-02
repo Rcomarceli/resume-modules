@@ -1,3 +1,22 @@
+terraform {
+  # require any 1.x version of Terraform
+  required_version = ">= 1.0.0, < 2.0.0"
+
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
+
+    # aws provider used to allow cloudflare to reach s3 bucket
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.16"
+    }
+  }
+
+}
+
 resource "cloudflare_record" "site_cname" {
   zone_id = var.cloudflare_zone_id
   name    = var.cloudflare_domain
