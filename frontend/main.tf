@@ -36,17 +36,17 @@ resource "aws_s3_bucket_website_configuration" "application" {
 resource "aws_s3_object" "html_index" {
   bucket = aws_s3_bucket.application.id
   key    = "index.html"
-  source = "./src/index.html"
+  source = "${path.module}/src/index.html"
   # content type defaults to binary/octetstream which prompts the user to download the html file rather than view it
   content_type = "text/html"
 
-  etag = filemd5("./src/index.html")
+  etag = filemd5("${path.module}/src/index.html")
 }
 resource "aws_s3_object" "css" {
   bucket       = aws_s3_bucket.application.id
   key          = "index.css"
-  source       = "./src/index.css"
+  source       = "${path.module}/src/index.css"
   content_type = "text/css"
 
-  etag = filemd5("./src/index.css")
+  etag = filemd5("${path.module}/src/index.css")
 }
