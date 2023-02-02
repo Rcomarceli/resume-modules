@@ -9,11 +9,11 @@ terraform {
 
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 4.52"
     }
     cloudflare = {
-      source = "cloudflare/cloudflare"
+      source  = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
   }
@@ -26,7 +26,7 @@ provider "aws" {
 
 module "frontend" {
   source = "../../frontend"
-  
+
 
   bucket_name = "testing_placeholder"
   # (valid placeholder values for any required arguments)
@@ -39,9 +39,9 @@ module "frontend" {
 
 module "dns" {
   source = "../../dns"
-  
-  cloudflare_zone_id = "testing_placeholder"
-  cloudflare_domain = "testing_placeholder"
+
+  cloudflare_zone_id    = "testing_placeholder"
+  cloudflare_domain     = "testing_placeholder"
   cloudflare_account_id = "testing_placeholder"
 }
 
