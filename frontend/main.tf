@@ -2,7 +2,7 @@
 # just have the security baked in (same for all env) for the website policy so we can test the website endpoint via github
 
 resource "aws_s3_bucket" "application" {
-  bucket = random_pet.website_bucket_name.id
+  bucket = var.bucket_name
 }
 
 resource "aws_s3_bucket_acl" "application" {
