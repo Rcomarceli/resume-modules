@@ -50,7 +50,7 @@ resource "aws_s3_object" "html_index" {
   bucket = aws_s3_bucket.application.id
   key    = "index.html"
   # source = "${path.module}/src/index.html"
-  source = templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url })
+  content = templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url })
   # content type defaults to binary/octetstream which prompts the user to download the html file rather than view it
   content_type = "text/html"
 
