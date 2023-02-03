@@ -28,5 +28,5 @@ variable "lambda_bucket_name" {
 
 variable "database_name" {
   description = "Name of the DB used to hold the visitor counter"
-  type = string
+  type        = string
 }

@@ -45,13 +45,6 @@ variable "cloudflare_zone_id" {
 variable "cloudflare_domain" {
   description = "Domain name to be used for accessing the website"
   type        = string
-
-}
-
-variable "cloudflare_api_token" {
-  description = "token used for cloudflare. defined in terraform cloud"
-  type        = string
-  sensitive   = true
 }
 
 variable "cloudflare_account_id" {
