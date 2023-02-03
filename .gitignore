@@ -6,3 +6,4 @@ terraform.tfstate.backup
 ignore/
 *.zip
 *.backup
+frontend/src/index.html

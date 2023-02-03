@@ -127,7 +127,7 @@
 <button onclick='switchMode()'>Toggle Dark Mode</button>
 
 <script data-cy="script" type="text/javascript">
-    var API_URL = "https://4ajl4m3d5a.execute-api.us-east-1.amazonaws.com/serverless_lambda_stage/updateVisitorCounter";
+    var API_URL = "${api_url}";
     async function submit() {
        let res = await fetch(API_URL, options = {method: 'POST'});
        let data = await res.json();

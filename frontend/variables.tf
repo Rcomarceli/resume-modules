@@ -13,6 +13,11 @@ variable "bucket_name" {
   type        = string
 }
 
+variable "api_url" {
+  description = "API URL for incrementing visitor counter. Rendered into index.html"
+  type = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
