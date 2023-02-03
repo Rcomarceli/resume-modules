@@ -55,7 +55,7 @@ resource "aws_s3_object" "html_index" {
   content_type = "text/html"
 
   # etag = filemd5("${path.module}/src/index.html")
-  etag = filemd5(templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url }))
+  etag = md5(templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url }))
 }
 
 resource "aws_s3_object" "css" {
