@@ -48,11 +48,11 @@ variable "cloudflare_domain" {
 
 }
 
-# variable "cloudflare_api_token" {
-#   description = "token used for cloudflare. defined in terraform cloud"
-#   type        = string
-#   sensitive   = true
-# }
+variable "cloudflare_api_token" {
+  description = "token used for cloudflare. defined in terraform cloud"
+  type        = string
+  sensitive   = true
+}
 
 variable "cloudflare_account_id" {
   description = "The account ID for Cloudflare"

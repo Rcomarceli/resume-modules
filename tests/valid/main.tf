@@ -47,5 +47,15 @@ module "dns" {
   website_endpoint      = "testing_placeholder"
   website_bucket_arn    = "testing_placeholder"
   website_bucket_id     = "testing_placeholder"
+  cloudflare_api_token = "testing_placeholder"
+}
+
+module "backend" {
+  source = "../../backend"
+
+  scope_permissions_arn = ""
+  update_visitor_counter_path = ""
+  lambda_bucket_name = ""
+  database_name = ""
 }
 
