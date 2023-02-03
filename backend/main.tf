@@ -80,6 +80,7 @@ resource "aws_lambda_function" "update_visitor_counter" {
   environment {
     variables = {
       DATABASE_NAME = aws_dynamodb_table.update_visitor_counter.name
+      DOMAIN_NAME   = var.cloudflare_domain
     }
   }
 }

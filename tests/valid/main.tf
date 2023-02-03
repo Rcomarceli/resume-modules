@@ -28,7 +28,7 @@ module "frontend" {
   source = "../../frontend"
 
 
-  bucket_name = "testing_placeholder"
+  bucket_name = ""
   # (valid placeholder values for any required arguments)
 
   providers = {
@@ -40,13 +40,13 @@ module "frontend" {
 module "dns" {
   source = "../../dns"
 
-  environment           = "testing_placeholder"
-  cloudflare_zone_id    = "testing_placeholder"
-  cloudflare_domain     = "testing_placeholder"
-  cloudflare_account_id = "testing_placeholder"
-  website_endpoint      = "testing_placeholder"
-  website_bucket_arn    = "testing_placeholder"
-  website_bucket_id     = "testing_placeholder"
+  environment           = ""
+  cloudflare_zone_id    = ""
+  cloudflare_domain     = ""
+  cloudflare_account_id = ""
+  website_endpoint      = ""
+  website_bucket_arn    = ""
+  website_bucket_id     = ""
 }
 
 module "backend" {
@@ -56,5 +56,6 @@ module "backend" {
   update_visitor_counter_path = ""
   lambda_bucket_name          = ""
   database_name               = ""
+  cloudflare_domain           = ""
 }
 

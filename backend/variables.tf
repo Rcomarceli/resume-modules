@@ -30,3 +30,8 @@ variable "database_name" {
   description = "Name of the DB used to hold the visitor counter"
   type        = string
 }
+
+variable "cloudflare_domain" {
+  description = "Domain name to be used for accessing the website"
+  type        = string
+}
