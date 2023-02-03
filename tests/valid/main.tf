@@ -29,7 +29,7 @@ module "frontend" {
 
 
   bucket_name = ""
-  api_url = ""
+  api_url     = ""
   # (valid placeholder values for any required arguments)
 
   providers = {

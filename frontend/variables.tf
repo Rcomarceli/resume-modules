@@ -15,7 +15,7 @@ variable "bucket_name" {
 
 variable "api_url" {
   description = "API URL for incrementing visitor counter. Rendered into index.html"
-  type = string
+  type        = string
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
