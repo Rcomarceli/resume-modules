@@ -20,7 +20,7 @@ variable "api_url" {
 
 variable "allowed_ip_range" {
   description = "The allowed IP range to the website S3 bucket. By default, uses allowed IPs from Cloudflare"
-  type = list(string)
+  type        = list(string)
   default = [
     "173.245.48.0/20",
     "103.21.244.0/22",
