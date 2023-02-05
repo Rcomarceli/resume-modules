@@ -13,3 +13,8 @@ output "website_bucket_id" {
   value       = aws_s3_bucket.application.id
   description = "ID of the website s3 bucket"
 }
+
+# output "website_html_etag" {
+#   value = aws_s3_object.html_index.etag
+#   description = "The Rendered index.html etag. Used for testing"
+# }

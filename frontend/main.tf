@@ -18,10 +18,42 @@ resource "aws_s3_bucket" "application" {
   bucket = var.bucket_name
 }
 
-resource "aws_s3_bucket_acl" "application" {
-  bucket = aws_s3_bucket.application.id
+# resource "aws_s3_bucket_acl" "application" {
+#   bucket = aws_s3_bucket.application.id
 
-  acl = "public-read"
+#   acl = "public-read"
+# }
+
+
+
+resource "aws_s3_bucket_policy" "application" {
+  bucket = aws_s3_bucket.application.id
+  policy = data.aws_iam_policy_document.application.json
+}
+
+data "aws_iam_policy_document" "application" {
+  statement {
+    sid    = "PublicReadGetObject"
+    effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    actions = [
+      "s3:GetObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.application.arn}/*"
+      # aws_s3_bucket.application.arn,
+    ]
+    condition {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
+
+      # values = local.cloudflare_ip_range
+      values = var.allowed_ip_range
+    }
+  }
 }
 
 
@@ -36,14 +68,14 @@ resource "aws_s3_bucket_website_configuration" "application" {
     key = "error.html"
   }
 
-  routing_rule {
-    condition {
-      key_prefix_equals = "docs/"
-    }
-    redirect {
-      replace_key_prefix_with = "documents/"
-    }
-  }
+  # routing_rule {
+  #   condition {
+  #     key_prefix_equals = "docs/"
+  #   }
+  #   redirect {
+  #     replace_key_prefix_with = "documents/"
+  #   }
+  # }
 }
 
 resource "aws_s3_object" "html_index" {

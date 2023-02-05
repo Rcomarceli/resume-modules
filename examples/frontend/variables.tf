@@ -46,6 +46,7 @@ variable "allowed_ip_range" {
     "2c0f:f248::/32"
   ]
 }
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
