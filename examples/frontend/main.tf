@@ -11,13 +11,13 @@ module "frontend" {
 }
 
 provider "aws" {
-
+  version = "~> 4.16"
   default_tags {
     tags = {
       Terraform = true
       Environment = "sandbox"
     }
   }
-  
+
   region = "us-east-1"
 }
