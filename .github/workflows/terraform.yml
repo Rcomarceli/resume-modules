@@ -57,9 +57,10 @@ jobs:
 
       - name: Init TFLint
         run: tflint --init
-    tests:
-      name: Run Tests
-      needs: startup
+        
+  tests:
+    name: Run Tests
+    needs: startup
       steps:
         - name: Run TFLint
           run: tflint -f compact --recursive
