@@ -57,23 +57,23 @@ jobs:
 
       - name: Init TFLint
         run: tflint --init
-        
+
   tests:
     name: Run Tests
     needs: startup
-      steps:
-        - name: Run TFLint
-          run: tflint -f compact --recursive
-          
-        - name: Terraform Format
-          id: fmt
-          run: terraform fmt -check -recursive
-
-        - name: Terraform Init
-          id: init
-          run: terraform -chdir=tests/valid init -backend=false
+    steps:
+      - name: Run TFLint
+        run: tflint -f compact --recursive
         
-        - name: Terraform Validate
-          id: validate
-          run: terraform -chdir=tests/valid validate -no-color
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=tests/valid init -backend=false
+      
+      - name: Terraform Validate
+        id: validate
+        run: terraform -chdir=tests/valid validate -no-color
 
