@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  startup:
+  terraform:
     permissions: write-all
     # name: print-token
     # environment: dev
@@ -58,10 +58,6 @@ jobs:
       - name: Init TFLint
         run: tflint --init
 
-  tests:
-    name: Run Tests
-    needs: startup
-    steps:
       - name: Run TFLint
         run: tflint -f compact --recursive
         
@@ -76,4 +72,21 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform -chdir=tests/valid validate -no-color
+
+      - name: Run GO Unit Tests
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+      # - uses: autero1/action-terraform@v0.1.0
+      #   with:
+      #     terraform_version: 0.12.21
+      - name: Download Go Modules
+        working-directory: tests/terratest
+        run: go mod download
+      - name: Run Go Tests
+        working-directory: tests/terratest
+        run: go test -v -tags=unit
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
