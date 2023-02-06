@@ -58,10 +58,10 @@ variable "api_gateway_name" {
 
 variable "api_gateway_stage_name" {
   description = "Name for API Gateway Stage"
-  type = string
+  type        = string
 }
 
 variable "lambda_permission_name" {
   description = "Name for lambda permission"
-  type = string
+  type        = string
 }

@@ -37,11 +37,11 @@ module "backend" {
   lambda_bucket_name          = random_pet.lambda_bucket_name.id
   database_name               = var.database_name
   cloudflare_domain           = var.cloudflare_domain
-  function_name = var.function_name
-  lambda_iam_role_name = var.lambda_iam_role_name
-  lambda_iam_policy_name = var.lambda_iam_policy_name
-  api_gateway_name = var.api_gateway_name
-  api_gateway_stage_name = var.api_gateway_stage_name
-  lambda_permission_name = var.lambda_permission_name
+  function_name               = var.function_name
+  lambda_iam_role_name        = var.lambda_iam_role_name
+  lambda_iam_policy_name      = var.lambda_iam_policy_name
+  api_gateway_name            = var.api_gateway_name
+  api_gateway_stage_name      = var.api_gateway_stage_name
+  lambda_permission_name      = var.lambda_permission_name
 
 }
