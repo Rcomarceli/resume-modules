@@ -7,9 +7,6 @@ import (
 
 	"strings"
 
-	"crypto/md5"
-	"encoding/hex"
-
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -62,9 +59,4 @@ func validateHtml(statusCode int, body string) bool {
 	}
 	// could validate body here
 	return true
-}
-
-func getMD5Hash(text string) string {
-	hash := md5.Sum([]byte(text))
-	return hex.EncodeToString(hash[:])
 }

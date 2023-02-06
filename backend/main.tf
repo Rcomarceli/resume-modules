@@ -65,7 +65,7 @@ resource "aws_s3_object" "lambda_code" {
 # use lambda archive in s3 bucket to define lambda function
 
 resource "aws_lambda_function" "update_visitor_counter" {
-  function_name = "update_visitor_counter"
+  function_name = var.function_name
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_object.lambda_code.key
@@ -92,7 +92,8 @@ resource "aws_cloudwatch_log_group" "update_visitor_counter" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "serverless_lambda"
+  # name = "serverless_lambda"
+  name = var.lambda_iam_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -114,7 +115,7 @@ resource "aws_iam_role" "lambda_exec" {
 }
 
 resource "aws_iam_policy" "database_access" {
-  name        = "database-access"
+  name        = var.lambda_iam_policy_name
   description = "Gives access to a lambda function to perform actions on dynamodb"
 
   policy = jsonencode({
@@ -148,14 +149,16 @@ resource "aws_iam_role_policy_attachment" "database_access" {
 
 # api
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "serverless_lambda_gw"
+  # name          = "serverless_lambda_gw"
+  name          = var.api_gateway_name
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "serverless_lambda_stage"
+  # name        = "serverless_lambda_stage"
+  name        = var.api_gateway_stage_name
   auto_deploy = true
 
   access_log_settings {
@@ -199,7 +202,7 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 }
 
 resource "aws_lambda_permission" "api_gw" {
-  statement_id  = "AllowExecutionFromAPIGateway"
+  statement_id  = var.lambda_permission_name
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.update_visitor_counter.function_name
   principal     = "apigateway.amazonaws.com"
