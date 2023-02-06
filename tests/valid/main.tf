@@ -58,5 +58,11 @@ module "backend" {
   lambda_bucket_name          = ""
   database_name               = ""
   cloudflare_domain           = ""
+  function_name               = ""
+  lambda_iam_role_name        = ""
+  lambda_iam_policy_name      = ""
+  api_gateway_name            = ""
+  api_gateway_stage_name      = ""
+  lambda_permission_name      = ""
 }
 
