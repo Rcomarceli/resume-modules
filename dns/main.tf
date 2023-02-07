@@ -17,6 +17,8 @@ terraform {
 
 }
 
+# this module depends on a frontend module for testing, since we need to point the domain name to an actual website
+
 resource "cloudflare_record" "site_cname" {
   zone_id = var.cloudflare_zone_id
   name    = var.cloudflare_domain
@@ -129,31 +131,31 @@ resource "cloudflare_worker_route" "change_header" {
 # edit bucket to allow for cloudflare access
 # refactor this so we add it on to the existing bucket permissions rather than defining the entire thing
 
-resource "aws_s3_bucket_policy" "allow_access_from_cloudflare" {
-  bucket = var.website_bucket_id
-  policy = data.aws_iam_policy_document.allow_access_from_cloudflare.json
-}
+# resource "aws_s3_bucket_policy" "allow_access_from_cloudflare" {
+#   bucket = var.website_bucket_id
+#   policy = data.aws_iam_policy_document.allow_access_from_cloudflare.json
+# }
 
-data "aws_iam_policy_document" "allow_access_from_cloudflare" {
-  statement {
-    sid    = "PublicReadGetObject"
-    effect = "Allow"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    actions = [
-      "s3:GetObject"
-    ]
-    resources = [
-      "${var.website_bucket_arn}/*"
-      # aws_s3_bucket.application.arn,
-    ]
-    condition {
-      test     = "IpAddress"
-      variable = "aws:SourceIp"
+# data "aws_iam_policy_document" "allow_access_from_cloudflare" {
+#   statement {
+#     sid    = "PublicReadGetObject"
+#     effect = "Allow"
+#     principals {
+#       type        = "*"
+#       identifiers = ["*"]
+#     }
+#     actions = [
+#       "s3:GetObject"
+#     ]
+#     resources = [
+#       "${var.website_bucket_arn}/*"
+#       # aws_s3_bucket.application.arn,
+#     ]
+#     condition {
+#       test     = "IpAddress"
+#       variable = "aws:SourceIp"
 
-      values = local.cloudflare_ip_range
-    }
-  }
-}
+#       values = local.cloudflare_ip_range
+#     }
+#   }
+# }

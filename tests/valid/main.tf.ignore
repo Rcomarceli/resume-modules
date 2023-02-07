@@ -25,9 +25,9 @@ provider "aws" {
 }
 
 module "frontend" {
-  source = "../../frontend"
+  source = "${path.module}/../frontend"
 
-
+  environment = ""
   bucket_name = ""
   api_url     = ""
   # (valid placeholder values for any required arguments)
@@ -39,7 +39,7 @@ module "frontend" {
 }
 
 module "dns" {
-  source = "../../dns"
+  source = "${path.module}/../dns"
 
   environment           = ""
   cloudflare_zone_id    = ""
@@ -51,7 +51,7 @@ module "dns" {
 }
 
 module "backend" {
-  source = "../../backend"
+  source = "${path.module}/../backend"
 
   scope_permissions_arn       = ""
   update_visitor_counter_path = ""

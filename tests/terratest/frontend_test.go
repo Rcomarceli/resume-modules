@@ -28,6 +28,7 @@ func TestTerraformAwsHelloWorldExample(t *testing.T) {
 		// The path to where our Terraform code is located
 		TerraformDir: "../../examples/frontend",
 		Vars: map[string]interface{}{
+			"environment":      "sandbox",
 			"bucket_name":      instanceName,
 			"api_url":          "bad_api_url",
 			"allowed_ip_range": []string{"0.0.0.0/0"},

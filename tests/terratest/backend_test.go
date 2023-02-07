@@ -42,6 +42,7 @@ func TestTerraformBackend(t *testing.T) {
 	otherVars := map[string]interface{}{
 		"scope_permissions_arn": "arn:aws:iam::681163022059:policy/ScopePermissions",
 		"cloudflare_domain":     "bad_domain",
+		"environment":           "sandbox",
 	}
 
 	// then combine all needed variables to pass to terratest terraformOptions

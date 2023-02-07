@@ -10,6 +10,11 @@
 #   length = 4
 # }
 
+variable "environment" {
+  description = "The name of the environment we're deploying to. Either Sandbox, Dev, or Prod"
+  type        = string
+}
+
 # api
 variable "scope_permissions_arn" {
   description = "ARN of the permission boundary that *should* be on the terraform user"

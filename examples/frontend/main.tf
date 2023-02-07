@@ -4,27 +4,34 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.52"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.1.0"
+    }
   }
-
   required_version = ">= 1.2.0"
-
 }
 
 provider "aws" {
   default_tags {
     tags = {
       Terraform   = true
-      Environment = "sandbox"
+      Environment = var.environment
     }
   }
   region = "us-east-1"
 }
 
-module "frontend" {
-  # source = "../../modules/frontend"
-  source = "../../frontend"
+resource "random_pet" "website_bucket_name" {
+  prefix = var.website_bucket_name
+  length = 4
+}
 
-  bucket_name      = var.bucket_name
+module "frontend" {
+  source = "../../frontend"
+  # source = "${path.module}/../frontend"
+
+  website_bucket_name      = random_pet.website_bucket_name.id
   api_url          = var.api_url
   allowed_ip_range = var.allowed_ip_range
   #   api_url     = module.backend.api_url

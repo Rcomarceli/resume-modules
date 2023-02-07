@@ -15,7 +15,7 @@ terraform {
 
 
 resource "aws_s3_bucket" "application" {
-  bucket = var.bucket_name
+  bucket = var.website_bucket_name
 }
 
 # resource "aws_s3_bucket_acl" "application" {

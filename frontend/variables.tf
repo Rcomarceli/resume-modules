@@ -8,7 +8,7 @@
 #   type        = string
 # }
 
-variable "bucket_name" {
+variable "website_bucket_name" {
   description = "The name of the s3 bucket containing the website code"
   type        = string
 }
