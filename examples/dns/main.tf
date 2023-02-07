@@ -43,16 +43,16 @@ provider "cloudflare" {
 
 module "frontend" {
   source = "../../frontend"
-#   source = "${path.module}/../frontend"
+  #   source = "${path.module}/../frontend"
 
   #  api url wont be tested, so it can be a fake URL in this case
-  api_url     = var.api_url
+  api_url             = var.api_url
   website_bucket_name = random_pet.website_bucket_name.id
 }
 
 module "dns" {
   source = "../../dns"
-#   source = "${path.module}/../dns"
+  #   source = "${path.module}/../dns"
 
   # all defined in the terraform cloud org as environment variables
   environment        = var.environment

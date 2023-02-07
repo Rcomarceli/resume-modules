@@ -40,7 +40,7 @@ variable "environment" {
 
 variable "cloudflare_api_token" {
   description = "API Token used for CLoudflare"
-  type = string
+  type        = string
 }
 
 variable "cloudflare_zone_id" {
@@ -84,7 +84,7 @@ variable "website_bucket_name" {
 
 variable "api_url" {
   description = "The API URL needed to increment the visitor counter. See Backend module"
-  type = string
+  type        = string
 }
 
 variable "allowed_ip_range" {
