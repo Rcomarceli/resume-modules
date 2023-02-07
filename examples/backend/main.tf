@@ -18,7 +18,7 @@ provider "aws" {
   default_tags {
     tags = {
       Terraform   = true
-      Environment = "sandbox"
+      Environment = var.environment
     }
   }
   region = "us-east-1"

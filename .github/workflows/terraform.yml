@@ -82,7 +82,14 @@ jobs:
       # - uses: autero1/action-terraform@v0.1.0
       #   with:
       #     terraform_version: 0.12.21
-      - name: Download Go Modules
+      - name: Download Go Modules for Validation Test
+        working-directory: tests/validate
+        run: go mod download
+      - name: Run Validation Test
+        working-directory: tests/validate
+        run: go test -v -tags=validate
+
+      - name: Download Go Modules for Unit Tests
         working-directory: tests/terratest
         run: go mod download
       - name: Run Go Tests

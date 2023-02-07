@@ -14,7 +14,7 @@ import (
 )
 
 // we will override terraform variables with github secrets for testing
-func TestTerraformAwsHelloWorldExample(t *testing.T) {
+func TestFrontend(t *testing.T) {
 	t.Parallel()
 
 	uniqueId := random.UniqueId()
@@ -28,10 +28,10 @@ func TestTerraformAwsHelloWorldExample(t *testing.T) {
 		// The path to where our Terraform code is located
 		TerraformDir: "../../examples/frontend",
 		Vars: map[string]interface{}{
-			"environment":      "sandbox",
-			"bucket_name":      instanceName,
-			"api_url":          "bad_api_url",
-			"allowed_ip_range": []string{"0.0.0.0/0"},
+			"environment":         "sandbox",
+			"website_bucket_name": instanceName,
+			"api_url":             "bad_api_url",
+			"allowed_ip_range":    []string{"0.0.0.0/0"},
 		},
 	})
 

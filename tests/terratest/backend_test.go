@@ -14,7 +14,7 @@ import (
 )
 
 // we will override terraform variables with github secrets for testing
-func TestTerraformBackend(t *testing.T) {
+func TestBackend(t *testing.T) {
 	t.Parallel()
 
 	// append unique names to given variables for terraform
