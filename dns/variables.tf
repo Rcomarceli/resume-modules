@@ -57,12 +57,12 @@ variable "website_endpoint" {
   type        = string
 }
 
-variable "website_bucket_arn" {
-  description = "The ARN for the s3 bucket with the website code"
-  type        = string
-}
+# variable "website_bucket_arn" {
+#   description = "The ARN for the s3 bucket with the website code"
+#   type        = string
+# }
 
-variable "website_bucket_id" {
-  description = "ID of the website s3 bucket"
-  type        = string
-}
+# variable "website_bucket_id" {
+#   description = "ID of the website s3 bucket"
+#   type        = string
+# }

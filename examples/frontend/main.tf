@@ -12,6 +12,8 @@ terraform {
   required_version = ">= 1.2.0"
 }
 
+# in this example, AWS credentials are fetched from environment variables
+# AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 provider "aws" {
   default_tags {
     tags = {

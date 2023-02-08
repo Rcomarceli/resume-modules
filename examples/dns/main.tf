@@ -48,6 +48,8 @@ module "frontend" {
   #  api url wont be tested, so it can be a fake URL in this case
   api_url             = var.api_url
   website_bucket_name = random_pet.website_bucket_name.id
+  allowed_ip_range    = var.allowed_ip_range
+
 }
 
 module "dns" {
@@ -61,6 +63,6 @@ module "dns" {
   # cloudflare_api_token  = var.cloudflare_api_token
   cloudflare_account_id = var.cloudflare_account_id
   website_endpoint      = module.frontend.website_endpoint
-  website_bucket_arn    = module.frontend.website_bucket_arn
-  website_bucket_id     = module.frontend.website_bucket_id
+  # website_bucket_arn    = module.frontend.website_bucket_arn
+  # website_bucket_id     = module.frontend.website_bucket_id
 }

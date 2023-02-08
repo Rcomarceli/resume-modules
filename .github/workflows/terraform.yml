@@ -9,9 +9,7 @@ on:
 jobs:
   terraform:
     permissions: write-all
-    # name: print-token
-    # environment: dev
-    # needs: pre-pkr
+
     name: "Terraform"
     runs-on: ubuntu-latest
     # defaults:
@@ -21,67 +19,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v1
-      #   with:
-      #     # terraform_version: 0.13.0:
-      #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-region: us-east-1
-      #     role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
-      #     role-session-name: OIDCSession
-
-      # tflint doesnt support recursive checking so we take it out
-      # - name: Cache plugin dir
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.tflint.d/plugins
-      #     key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
-
-      # - name: Setup TFLint
-      #   uses: terraform-linters/setup-tflint@v3
-      #   with:
-      #     tflint_version: latest
-      #     # tflint_version: v0.44.1
-
-      # - name: Load Tflint Config
-      #   uses: terraform-linters/tflint-load-config-action@v1
-      #   with:
-      #     source-repo: Rcomarceli/tflint-config
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Show version
-      #   run: tflint --version
-
-      # - name: Init TFLint
-      #   run: tflint --init
-
-      # - name: Run TFLint
-      #   run: tflint -f compact --recursive
-        
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check -recursive
-
-# validate step now replaced by terratest
-      # - name: Terraform Init
-      #   id: init
-      #   run: terraform -chdir=tests/valid init -backend=false
-      
-      # - name: Terraform Validate
-      #   id: validate
-      #   run: terraform -chdir=tests/valid validate -no-color
 
       - name: Run GO Unit Tests
         uses: actions/setup-go@v1
         with:
           go-version: 1.20
-      # - uses: autero1/action-terraform@v0.1.0
-      #   with:
-      #     terraform_version: 0.12.21
+
       - name: Download Go Modules for Validation Test
         working-directory: tests/validate
         run: go mod download
@@ -96,6 +42,11 @@ jobs:
         working-directory: tests/terratest
         run: go test -v -tags=unit
         env:
+        # need to add other environment variables here, esp for cloudflare testing
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_DOMAIN: ${{ env.CLOUDFLARE_DOMAIN }}
+          CLOUDFLARE_ZONE_ID: ${{ env.CLOUDFLARE_ZONE_ID }}
 
