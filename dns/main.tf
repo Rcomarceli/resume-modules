@@ -32,7 +32,8 @@ resource "cloudflare_record" "site_cname" {
 # www to non-www redirect
 # https://developers.cloudflare.com/pages/how-to/www-redirect/
 
-
+# note that since only 1 record of this can exist concurrently, we cant use this with a subdomain for testing
+# to test this one redirect, had to buy another domain for testing 
 resource "cloudflare_record" "www" {
   zone_id = var.cloudflare_zone_id
   name    = "www"
