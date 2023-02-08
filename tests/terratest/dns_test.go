@@ -66,10 +66,10 @@ func TestDns(t *testing.T) {
 	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateHtml)
 }
 
-func validateHtml(statusCode int, body string) bool {
-	if statusCode != 200 {
-		return false
-	}
-	// could validate body here
-	return true
-}
+// func validateHtml(statusCode int, body string) bool {
+// 	if statusCode != 200 {
+// 		return false
+// 	}
+// 	// could validate body here
+// 	return true
+// }
