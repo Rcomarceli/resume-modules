@@ -79,6 +79,10 @@ resource "cloudflare_list" "www" {
 # need write permissions on zone transform rules and managed headers
 # added api gateway, access apps, apps, botmanagement, cache rules, custom error rules, custom pages, disable esc
 # email routing rules, firewall services
+
+# http ddos managed, health checks, load balancers, logs, page shield
+# ssl and certs, sanitize, waiting room, web3 hostnames, zaraz
+# these are literally every single zone permission for the token that can be granted
 resource "cloudflare_ruleset" "www" {
   # account_id  = var.cloudflare_account_id
   account_id  = var.cloudflare_zone_id
