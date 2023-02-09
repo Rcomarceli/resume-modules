@@ -73,7 +73,7 @@ func TestDns(t *testing.T) {
 	// response from below will result in 200s, not 301
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
-	returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), 50, 5*time.Second, func() (string, error) {
+	returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 50, 5*time.Second, func() (string, error) {
 		// url := "http://example.com"
 		// expectedRedirectUrl := "http://www.example.com"
 
