@@ -77,6 +77,8 @@ resource "cloudflare_list" "www" {
 # maybe it isnt the perms and the redirect needs to be dynamic
 # per https://community.cloudflare.com/t/which-permission-s-are-needed-to-list-zone-rulesets-in-a-given-phase/433374
 # need write permissions on zone transform rules and managed headers
+# added api gateway, access apps, apps, botmanagement, cache rules, custom error rules, custom pages, disable esc
+# email routing rules, firewall services
 resource "cloudflare_ruleset" "www" {
   # account_id  = var.cloudflare_account_id
   account_id  = var.cloudflare_zone_id
