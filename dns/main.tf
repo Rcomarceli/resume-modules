@@ -81,7 +81,8 @@ resource "cloudflare_ruleset" "www" {
   account_id  = var.cloudflare_zone_id
   name        = "redirects_${var.environment}"
   description = "Redirect ruleset"
-  kind        = "root"
+  kind        = "zone"
+  # kind        = "root"
   phase       = "http_request_dynamic_redirect"
 
   rules {
