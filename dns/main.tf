@@ -80,7 +80,7 @@ resource "cloudflare_ruleset" "www" {
   # account_id  = var.cloudflare_account_id
   account_id  = var.cloudflare_zone_id
   name        = "redirects_${var.environment}"
-  description = "Redirect ruleset"
+  description = "Redirect ruleset change description just in case"
   kind        = "zone"
   # kind        = "root"
   phase = "http_request_dynamic_redirect"
@@ -108,8 +108,14 @@ resource "cloudflare_ruleset" "www" {
     # but double $'s is a special escape sequence in HCL
     # so we opt for this redundant way to preserve the $ in front
     # and the interpolated cloudflare_list.www_name after that
-    expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
-    description = "Apply redirects from redirect list"
+
+
+    # expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
+    # description = "Apply redirects from redirect list"
+    # enabled     = true
+
+    expression  = "(http.request.uri.path matches \"^/contact-us/\")"
+    description = "Redirect visitors still using old URL"
     enabled     = true
   }
 }
