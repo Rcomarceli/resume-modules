@@ -104,7 +104,7 @@ func TestDns(t *testing.T) {
 
 	logger.Logf(t, "returnedString is %s", returnedString)
 	if errReturn != nil {
-		t.FatalF("returned err %s", errReturn)
+		t.Fatalf("returned err %s", errReturn)
 	}
 
 	// http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
@@ -146,31 +146,31 @@ func TestDns(t *testing.T) {
 
 // }
 
-func HttpGetWithOptionsE(t testing.TestingT, options HttpGetOptions) (int, string, error) {
-	logger.Logf(t, "Making an HTTP GET call to URL %s", options.Url)
+// func HttpGetWithOptionsE(t testing.TestingT, options HttpGetOptions) (int, string, error) {
+// 	logger.Logf(t, "Making an HTTP GET call to URL %s", options.Url)
 
-	// Set HTTP client transport config
-	tr := http.DefaultTransport.(*http.Transport).Clone()
-	tr.TLSClientConfig = options.TlsConfig
+// 	// Set HTTP client transport config
+// 	tr := http.DefaultTransport.(*http.Transport).Clone()
+// 	tr.TLSClientConfig = options.TlsConfig
 
-	client := http.Client{
-		// By default, Go does not impose a timeout, so an HTTP connection attempt can hang for a LONG time.
-		Timeout: time.Duration(options.Timeout) * time.Second,
-		// Include the previously created transport config
-		Transport: tr,
-	}
+// 	client := http.Client{
+// 		// By default, Go does not impose a timeout, so an HTTP connection attempt can hang for a LONG time.
+// 		Timeout: time.Duration(options.Timeout) * time.Second,
+// 		// Include the previously created transport config
+// 		Transport: tr,
+// 	}
 
-	resp, err := client.Get(options.Url)
-	if err != nil {
-		return -1, "", err
-	}
+// 	resp, err := client.Get(options.Url)
+// 	if err != nil {
+// 		return -1, "", err
+// 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+// 	defer resp.Body.Close()
+// 	body, err := ioutil.ReadAll(resp.Body)
 
-	if err != nil {
-		return -1, "", err
-	}
+// 	if err != nil {
+// 		return -1, "", err
+// 	}
 
-	return resp.StatusCode, strings.TrimSpace(string(body)), nil
-}
+// 	return resp.StatusCode, strings.TrimSpace(string(body)), nil
+// }
