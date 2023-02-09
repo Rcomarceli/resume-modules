@@ -84,6 +84,30 @@ resource "cloudflare_list" "www" {
 # ssl and certs, sanitize, waiting room, web3 hostnames, zaraz
 # these are literally every single zone permission for the token that can be granted
 
+resource "cloudflare_ruleset" "www" {
+  # account_id  = var.cloudflare_account_id
+  account_id  = var.cloudflare_zone_id
+  name        = "redirects_${var.environment}"
+  description = "Redirect ruleset change description just in case"
+  kind        = "zone"
+  phase       = "http_request_dynamic_redirect"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_value {
+        status_code = 301
+        target_url {
+          value = "/contacts/"
+        }
+        preserve_query_string = false
+      }
+    }
+    expression  = "(http.request.uri.path matches \"^/contact-us/\")"
+    description = "Redirect visitors still using old URL"
+    enabled     = true
+  }
+}
 # resource "cloudflare_ruleset" "www" {
 #   # account_id  = var.cloudflare_account_id
 #   account_id  = var.cloudflare_zone_id
