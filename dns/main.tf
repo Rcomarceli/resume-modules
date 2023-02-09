@@ -83,7 +83,12 @@ resource "cloudflare_ruleset" "www" {
         key  = "http.request.full_uri"
       }
     }
-    expression  = "http.request.full_uri in $wwwredirect"
+
+    # expression below is interpreted. we want a literal "$name_of_cloudflare_list"
+    # but double $'s is a special escape sequence in HCL
+    # so we opt for this redundant way to preserve the $ in front
+    # and the interpolated cloudflare_list.www_name after that
+    expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www_name}"
     description = "Apply redirects from redirect list"
     enabled     = true
   }
