@@ -110,13 +110,13 @@ resource "cloudflare_record" "www" {
 # }
 
 resource "cloudflare_page_rule" "www" {
-  zone_id     = var.cloudflare_zone_id
-  target = "www.${var.cloudflare_domain}/*"
+  zone_id = var.cloudflare_zone_id
+  target  = "www.${var.cloudflare_domain}/*"
 
   actions {
     forwarding_url {
       # $1 allows us to match and keep any routes
-      url = "https://${var.cloudflare_domain}/$1"
+      url         = "https://${var.cloudflare_domain}/$1"
       status_code = 301
     }
   }
