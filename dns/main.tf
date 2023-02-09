@@ -86,10 +86,20 @@ resource "cloudflare_ruleset" "www" {
 
   rules {
     action = "redirect"
+    # action_parameters {
+    #   from_list {
+    #     name = cloudflare_list.www.name
+    #     key  = "http.request.full_uri"
+    #   }
+    # }
+
     action_parameters {
-      from_list {
-        name = cloudflare_list.www.name
-        key  = "http.request.full_uri"
+      from_value {
+        status_code = 301
+        target_url {
+          value = "/contacts/"
+        }
+        preserve_query_string = false
       }
     }
 
