@@ -48,8 +48,8 @@ resource "cloudflare_record" "www" {
 # cloudflare likes to add a "/" to the end of the source_url even if we don't put it there
 # so we add a "/" to the end. if not, we keep getting errors where terraform will keep trying to update this resource in place.
 # reworking www redirect portion to just be zone level because account level redirect cant be tested without collision
-# this rework changes it so we have edit permission over zone level redirects. Zone.dynamic redirect edit
-
+# this rework changes it so we have edit permission over zone level redirects. Zone.dynamic redirect edit? Page Rules? Workers Routes? Transform RUles?
+# Zone WAF? Config Rules?
 resource "cloudflare_list" "www" {
   account_id  = var.cloudflare_account_id
   name        = "wwwredirect_${var.environment}"
