@@ -73,7 +73,7 @@ resource "cloudflare_ruleset" "www" {
   name        = "redirects_${var.environment}"
   description = "Redirect ruleset"
   kind        = "root"
-  phase       = "http_request_redirect_${var.environment}"
+  phase       = "http_request_redirect"
 
   rules {
     action = "redirect"
