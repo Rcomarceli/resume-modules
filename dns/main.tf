@@ -49,26 +49,26 @@ resource "cloudflare_record" "www" {
 # so we add a "/" to the end. if not, we keep getting errors where terraform will keep trying to update this resource in place.
 # reworking www redirect portion to just be zone level because account level redirect cant be tested without collision
 
-resource "cloudflare_list" "www" {
-  account_id  = var.cloudflare_account_id
-  name        = "wwwredirect_${var.environment}"
-  description = "redirects www to non-www"
-  kind        = "redirect"
+# resource "cloudflare_list" "www" {
+#   account_id  = var.cloudflare_account_id
+#   name        = "wwwredirect_${var.environment}"
+#   description = "redirects www to non-www"
+#   kind        = "redirect"
 
-  item {
-    value {
-      redirect {
-        source_url            = "www.${var.cloudflare_domain}/"
-        target_url            = "https://${var.cloudflare_domain}"
-        include_subdomains    = "disabled"
-        subpath_matching      = "enabled"
-        status_code           = 301
-        preserve_query_string = "enabled"
-        preserve_path_suffix  = "enabled"
-      }
-    }
-  }
-}
+#   item {
+#     value {
+#       redirect {
+#         source_url            = "www.${var.cloudflare_domain}/"
+#         target_url            = "https://${var.cloudflare_domain}"
+#         include_subdomains    = "disabled"
+#         subpath_matching      = "enabled"
+#         status_code           = 301
+#         preserve_query_string = "enabled"
+#         preserve_path_suffix  = "enabled"
+#       }
+#     }
+#   }
+# }
 
 # this rework changes it so we have edit permission over zone level redirects. Zone.dynamic redirect edit? Page Rules? Workers Routes? Transform RUles?
 # Zone WAF? Config Rules?
@@ -109,50 +109,63 @@ resource "cloudflare_list" "www" {
 #   }
 # }
 
-# it turns out my entire issue was that i was putting my zone id into account id
-resource "cloudflare_ruleset" "www" {
-  # account_id  = var.cloudflare_account_id
+resource "cloudflare_page_rule" "www" {
   zone_id     = var.cloudflare_zone_id
-  name        = "redirects_${var.environment}"
-  description = "Redirect ruleset change description just in case"
-  kind        = "zone"
-  # kind        = "root"
-  phase = "http_request_dynamic_redirect"
+  target = "www.${var.cloudflare_domain}/*"
 
-  rules {
-    action = "redirect"
-    action_parameters {
-      from_list {
-        name = cloudflare_list.www.name
-        key  = "http.request.full_uri"
-      }
+  actions {
+    forwarding_url {
+      # $1 allows us to match and keep any routes
+      url = "https://${var.cloudflare_domain}/$1"
+      status_code = 301
     }
-
-    # action_parameters {
-    #   from_value {
-    #     status_code = 301
-    #     target_url {
-    #       value = "/contacts/"
-    #     }
-    #     preserve_query_string = false
-    #   }
-    # }
-
-    # expression below is interpreted. we want a literal "$name_of_cloudflare_list"
-    # but double $'s is a special escape sequence in HCL
-    # so we opt for this redundant way to preserve the $ in front
-    # and the interpolated cloudflare_list.www_name after that
-
-
-    expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
-    description = "Apply redirects from redirect list"
-    enabled     = true
-
-    # expression  = "(http.request.uri.path matches \"^/contact-us/\")"
-    # description = "Redirect visitors still using old URL"
-    # enabled     = true
   }
 }
+
+# it turns out my entire issue was that i was putting my zone id into account id
+# resource "cloudflare_ruleset" "www" {
+#   # account_id  = var.cloudflare_account_id
+#   zone_id     = var.cloudflare_zone_id
+#   name        = "redirects_${var.environment}"
+#   description = "Redirect ruleset change description just in case"
+#   kind        = "zone"
+#   # kind        = "root"
+#   phase = "http_request_dynamic_redirect"
+
+#   rules {
+#     action = "redirect"
+#     action_parameters {
+#       from_list {
+#         name = cloudflare_list.www.name
+#         key  = "http.request.full_uri"
+#       }
+#     }
+
+#     # action_parameters {
+#     #   from_value {
+#     #     status_code = 301
+#     #     target_url {
+#     #       value = "/contacts/"
+#     #     }
+#     #     preserve_query_string = false
+#     #   }
+#     # }
+
+#     # expression below is interpreted. we want a literal "$name_of_cloudflare_list"
+#     # but double $'s is a special escape sequence in HCL
+#     # so we opt for this redundant way to preserve the $ in front
+#     # and the interpolated cloudflare_list.www_name after that
+
+
+#     expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
+#     description = "Apply redirects from redirect list"
+#     enabled     = true
+
+#     # expression  = "(http.request.uri.path matches \"^/contact-us/\")"
+#     # description = "Redirect visitors still using old URL"
+#     # enabled     = true
+#   }
+# }
 
 # ensure API key has edit permissions for: Zone Settings
 # Looks like you encounter a bug if you attempt to use this and have an initial failure (such as permissions),
