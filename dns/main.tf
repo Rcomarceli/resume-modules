@@ -49,7 +49,7 @@ resource "cloudflare_record" "www" {
 # so we add a "/" to the end. if not, we keep getting errors where terraform will keep trying to update this resource in place.
 resource "cloudflare_list" "www" {
   account_id  = var.cloudflare_account_id
-  name        = "wwwredirect"
+  name        = "wwwredirect-${var.environment}"
   description = "redirects www to non-www"
   kind        = "redirect"
 
@@ -114,7 +114,6 @@ resource "cloudflare_worker_script" "change_header" {
   account_id = var.cloudflare_account_id
   name       = "terraform-change-resume-host-header-${var.environment}"
   content    = file("${path.module}/cloudflare_worker/change_header.js")
-
 
   plain_text_binding {
     name = "website_endpoint"
