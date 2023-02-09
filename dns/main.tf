@@ -112,7 +112,7 @@ resource "cloudflare_list" "www" {
 # it turns out my entire issue was that i was putting my zone id into account id
 resource "cloudflare_ruleset" "www" {
   # account_id  = var.cloudflare_account_id
-  zone_id  = var.cloudflare_zone_id
+  zone_id     = var.cloudflare_zone_id
   name        = "redirects_${var.environment}"
   description = "Redirect ruleset change description just in case"
   kind        = "zone"
