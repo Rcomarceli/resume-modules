@@ -83,7 +83,7 @@ resource "cloudflare_ruleset" "www" {
   description = "Redirect ruleset"
   kind        = "zone"
   # kind        = "root"
-  phase       = "http_request_dynamic_redirect"
+  phase = "http_request_dynamic_redirect"
 
   rules {
     action = "redirect"
