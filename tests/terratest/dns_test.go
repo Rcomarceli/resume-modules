@@ -77,10 +77,23 @@ func TestDns(t *testing.T) {
 		// url := "http://example.com"
 		// expectedRedirectUrl := "http://www.example.com"
 
+		// tr := http.DefaultTransport.(*http.Transport).Clone()
+		// tr.
+
+		// client := http.Client{
+		// 	// Timeout: time.Duration
+		// 	Transport: LogRedirects{},
+		// }
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+
 		targetUrl := anotherUrl
 		expectedRedirectUrl := httpsUrl
 
-		response, err := http.Get(targetUrl)
+		response, err := client.Get(targetUrl)
 		if err != nil {
 			// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
 			return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
@@ -96,7 +109,7 @@ func TestDns(t *testing.T) {
 			// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
 			return "", ThisThingFailed{Url: targetUrl, Message: "Redirect Url wrong"}
 		}
-		response.Body.Close()
+		defer response.Body.Close()
 
 		return "outstring", err
 
@@ -112,6 +125,26 @@ type ThisThingFailed struct {
 	Url     string
 	Message string
 }
+
+// type LogRedirects struct {
+// 	Transport http.RoundTripper
+// }
+
+// func (l LogRedirects) RoundTrip(req *http.Request) (resp *http.Response, err error) {
+// 	t := l.Transport
+// 	if t == nil {
+// 		t = http.DefaultTransport
+// 	}
+// 	resp, err = t.RoundTrip(req)
+// 	if err != nil {
+// 		return
+// 	}
+// 	switch resp.StatusCode {
+// 	case http.StatusMovedPermanently, http.StatusFound, http.StatusSeeOther, http.StatusTemporaryRedirect:
+// 		logger.Logf("Request for", req.URL, "redirected with status", resp.StatusCode)
+// 	}
+// 	return
+// }
 
 func (err ThisThingFailed) Error() string {
 	return fmt.Sprintf("Validation failed for URL %s. Message: %s", err.Url, err.Message)
