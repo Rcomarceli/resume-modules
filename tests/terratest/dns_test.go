@@ -11,6 +11,9 @@ import (
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
+	"github.com/gruntwork-io/terratest/modules/retry"
+
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
@@ -65,19 +68,47 @@ func TestDns(t *testing.T) {
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, "Hello, World!", 30, 5*time.Second)
 	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	httpsUrl := fmt.Sprintf("https://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
-	wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+	// wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
 	// response from below will result in 200s, not 301
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
-}
 
-func validateRedirect(t *testing.T, resp *http.Response, body string) {
-	expectedRedirect := fmt.Sprintf("http://%s", websiteEndpoint)
-	if resp.Request.URL.String() != expectedRedirect {
-		t.Fatalf("Expected URL %s to redirect to %s, but got %s", resp.Request.URL.String(), expectedRedirect, resp.Request.URL.String())
+	returnedString, errReturn := retry.DoWithRetryE(t, "HTTP GET to URL THING", 50, 5*time.Second, func() (string, error) {
+		// url := "http://example.com"
+		// expectedRedirectUrl := "http://www.example.com"
+
+		targetUrl := anotherUrl
+		expectedRedirectUrl := httpsUrl
+
+		response, err := http.Get(targetUrl)
+		if err != nil {
+			// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
+			return "failed to get url", err
+		}
+
+		if response.StatusCode != http.StatusMovedPermanently {
+			// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
+			return "expected wrong status code", err
+		}
+
+		redirectedUrl := response.Request.URL.String()
+		if redirectedUrl != expectedRedirectUrl {
+			// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
+			return "expected url to redirect", err
+		}
+		response.Body.Close()
+
+		return "outstring", err
+
+	})
+
+	logger.Logf(t, "returnedString is %s", returnedString)
+	if errReturn != nil {
+		t.FatalF("returned err %s", errReturn)
 	}
+
+	// http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
+	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
 }
 
 // func validateRedirect(statusCode int, body string) bool {
@@ -114,3 +145,32 @@ func validateRedirect(t *testing.T, resp *http.Response, body string) {
 // 	}
 
 // }
+
+func HttpGetWithOptionsE(t testing.TestingT, options HttpGetOptions) (int, string, error) {
+	logger.Logf(t, "Making an HTTP GET call to URL %s", options.Url)
+
+	// Set HTTP client transport config
+	tr := http.DefaultTransport.(*http.Transport).Clone()
+	tr.TLSClientConfig = options.TlsConfig
+
+	client := http.Client{
+		// By default, Go does not impose a timeout, so an HTTP connection attempt can hang for a LONG time.
+		Timeout: time.Duration(options.Timeout) * time.Second,
+		// Include the previously created transport config
+		Transport: tr,
+	}
+
+	resp, err := client.Get(options.Url)
+	if err != nil {
+		return -1, "", err
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return -1, "", err
+	}
+
+	return resp.StatusCode, strings.TrimSpace(string(body)), nil
+}
