@@ -75,7 +75,8 @@ resource "cloudflare_list" "www" {
 # origin rules? Zone?
 
 # maybe it isnt the perms and the redirect needs to be dynamic
-
+# per https://community.cloudflare.com/t/which-permission-s-are-needed-to-list-zone-rulesets-in-a-given-phase/433374
+# need write permissions on zone transform rules and managed headers
 resource "cloudflare_ruleset" "www" {
   # account_id  = var.cloudflare_account_id
   account_id  = var.cloudflare_zone_id
