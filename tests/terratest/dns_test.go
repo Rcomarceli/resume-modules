@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"net/http"
+
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -64,15 +66,51 @@ func TestDns(t *testing.T) {
 	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	httpsUrl := fmt.Sprintf("https://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+
+	// response from below will result in 200s, not 301
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 100, 5*time.Second, validateHtml)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 100, 5*time.Second, validateRedirect)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 100, 5*time.Second, validateRedirect)
 }
 
-func validateRedirect(statusCode int, body string) bool {
-	if statusCode != 301 {
-		return false
+func validateRedirect(t *testing.T, resp *http.Response, body string) {
+	expectedRedirect := fmt.Sprintf("http://%s", websiteEndpoint)
+	if resp.Request.URL.String() != expectedRedirect {
+		t.Fatalf("Expected URL %s to redirect to %s, but got %s", resp.Request.URL.String(), expectedRedirect, resp.Request.URL.String())
 	}
-	// could validate body here
-	return true
 }
+
+// func validateRedirect(statusCode int, body string) bool {
+// 	if statusCode != 301 {
+// 		return false
+// 	}
+// 	// could validate body here
+// 	return true
+// }
+
+// func TestUrlRedirect(t *testing.T, timeout, url, expectedRedirectUrl) {
+// 	// url := "http://example.com"
+// 	// expectedRedirectUrl := "http://www.example.com"
+
+// 	client := http.Client{
+// 		// By default, Go does not impose a timeout, so an HTTP connection attempt can hang for a LONG time.
+// 		Timeout: time.Duration(timeout) * time.Second,
+// 		// Include the previously created transport config
+// 		// Transport: tr,
+// 	}
+
+// 	response, err := http.Get(url)
+// 	if err != nil {
+// 		t.Fatalf("Failed to GET URL %s: %s", url, err)
+// 	}
+// 	defer response.Body.Close()
+
+// 	if response.StatusCode != http.StatusMovedPermanently {
+// 		t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
+// 	}
+// 	redirectedUrl := response.Request.URL.String()
+// 	if redirectedUrl != expectedRedirectUrl {
+// 		t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
+// 	}
+
+// }
