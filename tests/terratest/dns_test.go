@@ -63,7 +63,7 @@ func TestDns(t *testing.T) {
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, "Hello, World!", 30, 5*time.Second)
 	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
-	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateHtml)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 100, 5*time.Second, validateHtml)
 }
 
 // func validateHtml(statusCode int, body string) bool {
