@@ -70,10 +70,10 @@ resource "cloudflare_list" "www" {
 
 resource "cloudflare_ruleset" "www" {
   account_id  = var.cloudflare_account_id
-  name        = "redirects"
+  name        = "redirects_${var.environment}"
   description = "Redirect ruleset"
   kind        = "root"
-  phase       = "http_request_redirect"
+  phase       = "http_request_redirect_${var.environment}"
 
   rules {
     action = "redirect"
