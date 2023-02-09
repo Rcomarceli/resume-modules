@@ -64,15 +64,15 @@ func TestDns(t *testing.T) {
 	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	httpsUrl := fmt.Sprintf("https://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
-	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 100, 5*time.Second, validateHtml)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 100, 5*time.Second, validateHtml)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 100, 5*time.Second, validateHtml)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 100, 5*time.Second, validateRedirect)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 100, 5*time.Second, validateRedirect)
 }
 
-// func validateHtml(statusCode int, body string) bool {
-// 	if statusCode != 200 {
-// 		return false
-// 	}
-// 	// could validate body here
-// 	return true
-// }
+func validateRedirect(statusCode int, body string) bool {
+	if statusCode != 301 {
+		return false
+	}
+	// could validate body here
+	return true
+}
