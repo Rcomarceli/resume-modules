@@ -73,7 +73,7 @@ func TestDns(t *testing.T) {
 	// response from below will result in 200s, not 301
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
-	returnedString := retry.DoWithRetry(t, "HTTP GET to URL THING", 50, 5*time.Second, func() (string, error) {
+	returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), 50, 5*time.Second, func() (string, error) {
 		// url := "http://example.com"
 		// expectedRedirectUrl := "http://www.example.com"
 
@@ -83,18 +83,18 @@ func TestDns(t *testing.T) {
 		response, err := http.Get(targetUrl)
 		if err != nil {
 			// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
-			return "", ThisThingFailed{Url: targetUrl}
+			return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
 		}
 
 		if response.StatusCode != http.StatusMovedPermanently {
 			// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
-			return "", ThisThingFailed{Url: targetUrl}
+			return "", ThisThingFailed{Url: targetUrl, Message: "Wrong status code"}
 		}
 
 		redirectedUrl := response.Request.URL.String()
 		if redirectedUrl != expectedRedirectUrl {
 			// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
-			return "", ThisThingFailed{Url: targetUrl}
+			return "", ThisThingFailed{Url: targetUrl, Message: "Redirect Url wrong"}
 		}
 		response.Body.Close()
 
@@ -109,10 +109,11 @@ func TestDns(t *testing.T) {
 }
 
 type ThisThingFailed struct {
-	Url string
+	Url     string
+	Message string
 }
 
 func (err ThisThingFailed) Error() string {
-	return fmt.Sprintf("Validation failed for URL %s", err.Url)
+	return fmt.Sprintf("Validation failed for URL %s. Message: %s", err.Url, err.Message)
 	// return fmt.Sprintf("Validation failed for URL %s. Response status: %d. Response body:\n%s", err.Url, err.Status, err.Body)
 }
