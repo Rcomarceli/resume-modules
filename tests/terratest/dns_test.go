@@ -68,9 +68,9 @@ func TestDns(t *testing.T) {
 	wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
 	// response from below will result in 200s, not 301
-	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 100, 5*time.Second, validateHtml)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 100, 5*time.Second, validateRedirect)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 100, 5*time.Second, validateRedirect)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
 }
 
 func validateRedirect(t *testing.T, resp *http.Response, body string) {
