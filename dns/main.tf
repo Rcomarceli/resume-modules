@@ -47,6 +47,9 @@ resource "cloudflare_record" "www" {
 # requires edit permissions account.bulk url redirects? account.filter lists
 # cloudflare likes to add a "/" to the end of the source_url even if we don't put it there
 # so we add a "/" to the end. if not, we keep getting errors where terraform will keep trying to update this resource in place.
+# reworking www redirect portion to just be zone level because account level redirect cant be tested without collision
+
+
 resource "cloudflare_list" "www" {
   account_id  = var.cloudflare_account_id
   name        = "wwwredirect_${var.environment}"
@@ -69,10 +72,11 @@ resource "cloudflare_list" "www" {
 }
 
 resource "cloudflare_ruleset" "www" {
-  account_id  = var.cloudflare_account_id
+  # account_id  = var.cloudflare_account_id
+  account_id  = var.cloudflare_zone_id
   name        = "redirects_${var.environment}"
   description = "Redirect ruleset"
-  kind        = "zone"
+  kind        = "root"
   phase       = "http_request_redirect"
 
   rules {
