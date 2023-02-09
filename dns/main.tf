@@ -84,48 +84,16 @@ resource "cloudflare_list" "www" {
 # ssl and certs, sanitize, waiting room, web3 hostnames, zaraz
 # these are literally every single zone permission for the token that can be granted
 
-resource "cloudflare_ruleset" "www" {
-  # account_id  = var.cloudflare_account_id
-  account_id  = var.cloudflare_zone_id
-  name        = "redirects_${var.environment}"
-  description = "Redirect ruleset change description just in case"
-  kind        = "zone"
-  phase       = "http_request_dynamic_redirect"
-
-  rules {
-    action = "redirect"
-    action_parameters {
-      from_value {
-        status_code = 301
-        target_url {
-          value = "/contacts/"
-        }
-        preserve_query_string = false
-      }
-    }
-    expression  = "(http.request.uri.path matches \"^/contact-us/\")"
-    description = "Redirect visitors still using old URL"
-    enabled     = true
-  }
-}
 # resource "cloudflare_ruleset" "www" {
 #   # account_id  = var.cloudflare_account_id
-#   account_id  = var.cloudflare_zone_id
+#   zone_id  = var.cloudflare_zone_id
 #   name        = "redirects_${var.environment}"
 #   description = "Redirect ruleset change description just in case"
 #   kind        = "zone"
-#   # kind        = "root"
-#   phase = "http_request_dynamic_redirect"
+#   phase       = "http_request_dynamic_redirect"
 
 #   rules {
 #     action = "redirect"
-#     # action_parameters {
-#     #   from_list {
-#     #     name = cloudflare_list.www.name
-#     #     key  = "http.request.full_uri"
-#     #   }
-#     # }
-
 #     action_parameters {
 #       from_value {
 #         status_code = 301
@@ -135,22 +103,56 @@ resource "cloudflare_ruleset" "www" {
 #         preserve_query_string = false
 #       }
 #     }
-
-#     # expression below is interpreted. we want a literal "$name_of_cloudflare_list"
-#     # but double $'s is a special escape sequence in HCL
-#     # so we opt for this redundant way to preserve the $ in front
-#     # and the interpolated cloudflare_list.www_name after that
-
-
-#     # expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
-#     # description = "Apply redirects from redirect list"
-#     # enabled     = true
-
 #     expression  = "(http.request.uri.path matches \"^/contact-us/\")"
 #     description = "Redirect visitors still using old URL"
 #     enabled     = true
 #   }
 # }
+
+# it turns out my entire issue was that i was putting my zone id into account id
+resource "cloudflare_ruleset" "www" {
+  # account_id  = var.cloudflare_account_id
+  zone_id  = var.cloudflare_zone_id
+  name        = "redirects_${var.environment}"
+  description = "Redirect ruleset change description just in case"
+  kind        = "zone"
+  # kind        = "root"
+  phase = "http_request_dynamic_redirect"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_list {
+        name = cloudflare_list.www.name
+        key  = "http.request.full_uri"
+      }
+    }
+
+    # action_parameters {
+    #   from_value {
+    #     status_code = 301
+    #     target_url {
+    #       value = "/contacts/"
+    #     }
+    #     preserve_query_string = false
+    #   }
+    # }
+
+    # expression below is interpreted. we want a literal "$name_of_cloudflare_list"
+    # but double $'s is a special escape sequence in HCL
+    # so we opt for this redundant way to preserve the $ in front
+    # and the interpolated cloudflare_list.www_name after that
+
+
+    expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
+    description = "Apply redirects from redirect list"
+    enabled     = true
+
+    # expression  = "(http.request.uri.path matches \"^/contact-us/\")"
+    # description = "Redirect visitors still using old URL"
+    # enabled     = true
+  }
+}
 
 # ensure API key has edit permissions for: Zone Settings
 # Looks like you encounter a bug if you attempt to use this and have an initial failure (such as permissions),
