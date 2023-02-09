@@ -50,6 +50,7 @@ resource "cloudflare_record" "www" {
 # reworking www redirect portion to just be zone level because account level redirect cant be tested without collision
 # this rework changes it so we have edit permission over zone level redirects. Zone.dynamic redirect edit? Page Rules? Workers Routes? Transform RUles?
 # Zone WAF? Config Rules?
+# origin rules? Zone?
 resource "cloudflare_list" "www" {
   account_id  = var.cloudflare_account_id
   name        = "wwwredirect_${var.environment}"
