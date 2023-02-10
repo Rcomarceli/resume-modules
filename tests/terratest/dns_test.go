@@ -104,10 +104,13 @@ func TestDns(t *testing.T) {
 			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
 		}
 
-		redirectedUrl := response.Request.URL.String()
-		if redirectedUrl != expectedRedirectUrl {
+		// redirectedUrl := response.Request.URL.String()
+		// redirectedUrl, errLocation := response.Location()
+		location := response.Header.Get("Location")
+		// if redirectedUrl != expectedRedirectUrl {
+		if location != expectedRedirectUrl {
 			// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
-			return "", ThisThingFailed{Url: targetUrl, Message: "Redirect Url wrong"}
+			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
 		}
 		defer response.Body.Close()
 
