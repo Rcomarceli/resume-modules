@@ -198,7 +198,6 @@ resource "aws_apigatewayv2_route" "update_visitor_counter" {
 # using /aws/vendedlogs due to character limit
 # see https://stackoverflow.com/questions/73771271/i-am-getting-issue-in-policy-document-length-breaking-cloudwatch-logs-constraint
 resource "aws_cloudwatch_log_group" "api_gw" {
-  # name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
   name = "/aws/vendedlogs/${aws_apigatewayv2_api.lambda.name}"
 
   retention_in_days = 30

@@ -13,7 +13,7 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/retry"
 
-	"github.com/gruntwork-io/terratest/modules/logger"
+	// "github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
@@ -56,34 +56,77 @@ func TestDns(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// Run `terraform output` to get the IP of the instance
-	websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
+	// websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
 	// websiteEtag := terraform.Output(t, terraformOptions, "website_html_etag")
 
-	// note that this check for the rendered html file only works because we arent expecting any content to change in an isolated test without any lambda function
-	// https://github.com/gruntwork-io/terratest/issues/200
-	// Make an HTTP request to the instance and make sure we get back a 200 OK with the body "Hello, World!"
-	url := fmt.Sprintf("http://%s", websiteEndpoint)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, nil, 10, 5*time.Second)
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, "Hello, World!", 30, 5*time.Second)
-	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+	httpUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	httpsUrl := fmt.Sprintf("https://%s/", os.Getenv("CLOUDFLARE_DOMAIN"))
 	// wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
-	// response from below will result in 200s, not 301
+	// verify https returns 200
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
-	// returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
-	returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
+	// verify www returns 200
+	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
+	// validate http to https redirect
+	verifyRedirect(t, httpUrl, httpsUrl, 30, 5*time.Second)
+	// retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", httpUrl), 30, 5*time.Second, func() (string, error) {
+
+	// 	client := &http.Client{
+	// 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+	// 			return http.ErrUseLastResponse
+	// 		},
+	// 	}
+
+	// 	targetUrl := httpUrl
+	// 	expectedRedirectUrl := httpsUrl
+
+	// 	response, err := client.Get(targetUrl)
+	// 	if err != nil {
+	// 		// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
+	// 		return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
+	// 	}
+
+	// 	if response.StatusCode != http.StatusMovedPermanently {
+	// 		// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
+	// 		return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
+	// 	}
+
+	// 	// redirectedUrl := response.Request.URL.String()
+	// 	// redirectedUrl, errLocation := response.Location()
+	// 	location := response.Header.Get("Location")
+	// 	// if redirectedUrl != expectedRedirectUrl {
+	// 	if location != expectedRedirectUrl {
+	// 		// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
+	// 		return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
+	// 	}
+	// 	defer response.Body.Close()
+
+	// 	return "All clear", err
+
+	// })
+
+	// logger.Logf(t, "returnedString is %s", returnedString)
+
+	// http_helper.HttpGetWithRetryWithCustomValidation(t, httpUrl, nil, 50, 5*time.Second, validateRedirect)
+	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
+}
+
+func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, retries int, sleepBetweenRetries time.Duration) error {
+
+	// _, err := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), retries, sleepBetweenRetries, func() (string, error) {
+	retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), retries, sleepBetweenRetries, func() (string, error) {
 		client := &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 		}
 
-		targetUrl := anotherUrl
-		expectedRedirectUrl := httpsUrl
+		// targetUrl := httpUrl
+		// expectedRedirectUrl := httpsUrl
 
 		response, err := client.Get(targetUrl)
 		if err != nil {
@@ -107,13 +150,13 @@ func TestDns(t *testing.T) {
 		defer response.Body.Close()
 
 		return "All clear", err
-
 	})
 
-	logger.Logf(t, "returnedString is %s", returnedString)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
-	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
+	return nil
 }
 
 type ThisThingFailed struct {
