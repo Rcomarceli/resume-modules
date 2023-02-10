@@ -90,7 +90,7 @@ resource "aws_cloudwatch_log_group" "update_visitor_counter" {
 
   retention_in_days = 30
 }
-
+# https://stackoverflow.com/questions/73771271/i-am-getting-issue-in-policy-document-length-breaking-cloudwatch-logs-constraint
 resource "aws_iam_role" "lambda_exec" {
   # name = "serverless_lambda"
   name = var.lambda_iam_role_name
@@ -195,8 +195,11 @@ resource "aws_apigatewayv2_route" "update_visitor_counter" {
   target    = "integrations/${aws_apigatewayv2_integration.update_visitor_counter.id}"
 }
 
+# using /aws/vendedlogs due to character limit
+# see https://stackoverflow.com/questions/73771271/i-am-getting-issue-in-policy-document-length-breaking-cloudwatch-logs-constraint
 resource "aws_cloudwatch_log_group" "api_gw" {
-  name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
+  # name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
+  name = "/aws/vendedlogs/${aws_apigatewayv2_api.lambda.name}"
 
   retention_in_days = 30
 }
