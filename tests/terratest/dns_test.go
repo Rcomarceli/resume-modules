@@ -67,7 +67,7 @@ func TestDns(t *testing.T) {
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, nil, 10, 5*time.Second)
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, "Hello, World!", 30, 5*time.Second)
 	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
-	httpsUrl := fmt.Sprintf("https://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+	httpsUrl := fmt.Sprintf("https://%s/", os.Getenv("CLOUDFLARE_DOMAIN"))
 	// wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
 	// response from below will result in 200s, not 301
