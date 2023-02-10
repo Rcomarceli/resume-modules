@@ -73,17 +73,9 @@ func TestDns(t *testing.T) {
 	// response from below will result in 200s, not 301
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
-	returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
-		// url := "http://example.com"
-		// expectedRedirectUrl := "http://www.example.com"
+	// returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
+	retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
 
-		// tr := http.DefaultTransport.(*http.Transport).Clone()
-		// tr.
-
-		// client := http.Client{
-		// 	// Timeout: time.Duration
-		// 	Transport: LogRedirects{},
-		// }
 		client := &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
@@ -114,11 +106,11 @@ func TestDns(t *testing.T) {
 		}
 		defer response.Body.Close()
 
-		return "outstring", err
+		return "All clear", err
 
 	})
 
-	logger.Logf(t, "returnedString is %s", returnedString)
+	// logger.Logf(t, "returnedString is %s", returnedString)
 
 	// http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
 	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
@@ -128,26 +120,6 @@ type ThisThingFailed struct {
 	Url     string
 	Message string
 }
-
-// type LogRedirects struct {
-// 	Transport http.RoundTripper
-// }
-
-// func (l LogRedirects) RoundTrip(req *http.Request) (resp *http.Response, err error) {
-// 	t := l.Transport
-// 	if t == nil {
-// 		t = http.DefaultTransport
-// 	}
-// 	resp, err = t.RoundTrip(req)
-// 	if err != nil {
-// 		return
-// 	}
-// 	switch resp.StatusCode {
-// 	case http.StatusMovedPermanently, http.StatusFound, http.StatusSeeOther, http.StatusTemporaryRedirect:
-// 		logger.Logf("Request for", req.URL, "redirected with status", resp.StatusCode)
-// 	}
-// 	return
-// }
 
 func (err ThisThingFailed) Error() string {
 	return fmt.Sprintf("Validation failed for URL %s. Message: %s", err.Url, err.Message)
