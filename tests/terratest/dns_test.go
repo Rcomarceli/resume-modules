@@ -13,7 +13,7 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/retry"
 
-	"github.com/gruntwork-io/terratest/modules/logger"
+	// "github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
