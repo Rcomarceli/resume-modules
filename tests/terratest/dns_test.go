@@ -7,13 +7,13 @@ import (
 	"testing"
 	"time"
 
-	// "net/http"
+	"net/http"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
-	// "github.com/gruntwork-io/terratest/modules/retry"
+	"github.com/gruntwork-io/terratest/modules/retry"
 
-	// "github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
@@ -66,7 +66,7 @@ func TestDns(t *testing.T) {
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, nil, 10, 5*time.Second)
 	// http_helper.HttpGetWithRetry(t, url, nil, 200, "Hello, World!", 30, 5*time.Second)
-	// anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+	anotherUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	httpsUrl := fmt.Sprintf("https://%s/", os.Getenv("CLOUDFLARE_DOMAIN"))
 	// wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
@@ -74,43 +74,43 @@ func TestDns(t *testing.T) {
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
 	// returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
-	// retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
+	returnedString := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", anotherUrl), 30, 5*time.Second, func() (string, error) {
 
-	// 	client := &http.Client{
-	// 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-	// 			return http.ErrUseLastResponse
-	// 		},
-	// 	}
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
 
-	// 	targetUrl := anotherUrl
-	// 	expectedRedirectUrl := httpsUrl
+		targetUrl := anotherUrl
+		expectedRedirectUrl := httpsUrl
 
-	// 	response, err := client.Get(targetUrl)
-	// 	if err != nil {
-	// 		// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
-	// 		return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
-	// 	}
+		response, err := client.Get(targetUrl)
+		if err != nil {
+			// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
+			return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
+		}
 
-	// 	if response.StatusCode != http.StatusMovedPermanently {
-	// 		// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
-	// 		return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
-	// 	}
+		if response.StatusCode != http.StatusMovedPermanently {
+			// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
+			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
+		}
 
-	// 	// redirectedUrl := response.Request.URL.String()
-	// 	// redirectedUrl, errLocation := response.Location()
-	// 	location := response.Header.Get("Location")
-	// 	// if redirectedUrl != expectedRedirectUrl {
-	// 	if location != expectedRedirectUrl {
-	// 		// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
-	// 		return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
-	// 	}
-	// 	defer response.Body.Close()
+		// redirectedUrl := response.Request.URL.String()
+		// redirectedUrl, errLocation := response.Location()
+		location := response.Header.Get("Location")
+		// if redirectedUrl != expectedRedirectUrl {
+		if location != expectedRedirectUrl {
+			// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
+			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
+		}
+		defer response.Body.Close()
 
-	// 	return "All clear", err
+		return "All clear", err
 
-	// })
+	})
 
-	// logger.Logf(t, "returnedString is %s", returnedString)
+	logger.Logf(t, "returnedString is %s", returnedString)
 
 	// http_helper.HttpGetWithRetryWithCustomValidation(t, anotherUrl, nil, 50, 5*time.Second, validateRedirect)
 	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
