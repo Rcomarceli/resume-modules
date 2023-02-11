@@ -36,10 +36,10 @@ jobs:
         run: go test -v -tags=validate
 
       - name: Download Go Modules for Unit Tests
-        working-directory: tests/terratest
+        working-directory: tests/unit
         run: go mod download
       - name: Run Go Tests
-        working-directory: tests/terratest
+        working-directory: tests/unit
         run: go test -v -tags=unit
         env:
         # need to add other environment variables here, esp for cloudflare testing
