@@ -73,49 +73,12 @@ func TestDns(t *testing.T) {
 
 	// validate http to https redirect
 	verifyRedirect(t, httpUrl, httpsUrl, 30, 5*time.Second)
-	// retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", httpUrl), 30, 5*time.Second, func() (string, error) {
 
-	// 	client := &http.Client{
-	// 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-	// 			return http.ErrUseLastResponse
-	// 		},
-	// 	}
-
-	// 	targetUrl := httpUrl
-	// 	expectedRedirectUrl := httpsUrl
-
-	// 	response, err := client.Get(targetUrl)
-	// 	if err != nil {
-	// 		// t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
-	// 		return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
-	// 	}
-
-	// 	if response.StatusCode != http.StatusMovedPermanently {
-	// 		// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
-	// 		return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
-	// 	}
-
-	// 	// redirectedUrl := response.Request.URL.String()
-	// 	// redirectedUrl, errLocation := response.Location()
-	// 	location := response.Header.Get("Location")
-	// 	// if redirectedUrl != expectedRedirectUrl {
-	// 	if location != expectedRedirectUrl {
-	// 		// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
-	// 		return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
-	// 	}
-	// 	defer response.Body.Close()
-
-	// 	return "All clear", err
-
-	// })
-
-	// logger.Logf(t, "returnedString is %s", returnedString)
-
-	// http_helper.HttpGetWithRetryWithCustomValidation(t, httpUrl, nil, 50, 5*time.Second, validateRedirect)
-	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateRedirect)
+	// verify www to non-www https redirect
+	verifyRedirect(t, wwwUrl, httpsUrl, 30, 5*time.Second)
 }
 
-func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, retries int, sleepBetweenRetries time.Duration) error {
+func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, retries int, sleepBetweenRetries time.Duration) {
 
 	// _, err := retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), retries, sleepBetweenRetries, func() (string, error) {
 	retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), retries, sleepBetweenRetries, func() (string, error) {
@@ -149,14 +112,13 @@ func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, 
 		}
 		defer response.Body.Close()
 
-		return "All clear", err
+		return "", err
 	})
 
 	// if err != nil {
 	// 	return err
 	// }
 
-	return nil
 }
 
 type ThisThingFailed struct {
