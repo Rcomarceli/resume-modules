@@ -60,4 +60,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_DOMAIN: ${{ vars.CLOUDFLARE_DOMAIN }}
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+      
+      - name: Run End to End Test
+        uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          spec: tests/e2e/cypress_spec1.js
 
