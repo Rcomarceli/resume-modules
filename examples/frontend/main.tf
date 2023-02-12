@@ -26,7 +26,7 @@ provider "aws" {
 
 resource "random_pet" "website_bucket_name" {
   prefix = var.website_bucket_name
-  length = 4
+  length = 3
 }
 
 module "frontend" {
