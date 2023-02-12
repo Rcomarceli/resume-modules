@@ -14,6 +14,8 @@ import (
 
 	// http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
+	"github.com/PuerkitoBio/goquery"
+
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/retry"
@@ -109,21 +111,26 @@ func verifyVisitorCounter(t *testing.T, url string, retries int, sleepBetweenRet
 		// 	return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Error reading response body: %s", err)}
 		// }
 
+		if response.StatusCode != 200 {
+			// log.Fatalf("failed to fetch data: %d %s", resp.StatusCode, resp.Status)
+			return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Failed to fetch data: %d %s", resp.StatusCode, resp.Status)}
+		}
+
 		// Parse the HTML response
 		// doc, err := html.Parse(resp.Body)
-		doc, err := html.Parse(response.Body)
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
 			return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Error parsing HTML: %s", err)}
 		}
 
 		// Search for the span tag with id "visitorCount"
-		visitorCount := searchForSpanTag(doc, "visitorCount")
+		visitorCount := doc.Find("visitorCount").Text()
 		if visitorCount == nil {
 			return "", ThisThingFailed{Url: url, Message: "Span tag with id 'visitorCount' not found"}
 		}
 
 		// Print the contents of the span tag
-		logger.Logf(t, "Visitor count: %s", visitorCount.FirstChild.Data)
+		logger.Logf(t, "Visitor count: %s", visitorCount)
 
 		return "", err
 	})
