@@ -1,0 +1,26 @@
+{
+  "name": "resume-modules",
+  "version": "1.0.0",
+  "description": "Resume for Cloud Infrastructure",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rcomarceli/resume-modules.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rcomarceli/resume-modules/issues"
+  },
+  "homepage": "https://github.com/Rcomarceli/resume-modules#readme",
+  "devDependencies": {
+    "cypress": "^12.5.1"
+  }
+}
