@@ -31,7 +31,7 @@ resource "random_pet" "lambda_bucket_name" {
 }
 
 module "backend" {
-  source = "../../../../backend"
+  source = "../../../backend"
   # source = "${path.module}/../backend"
 
   scope_permissions_arn       = var.scope_permissions_arn
@@ -54,7 +54,7 @@ resource "random_pet" "website_bucket_name" {
 }
 
 module "frontend" {
-  source = "../../../../frontend"
+  source = "../../../frontend"
   # source = "${path.module}/../frontend"
 
   website_bucket_name = random_pet.website_bucket_name.id

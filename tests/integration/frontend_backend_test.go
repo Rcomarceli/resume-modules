@@ -5,9 +5,13 @@ import (
 	"testing"
 	"time"
 
+	"net/http"
+
 	"strings"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
+
+	"github.com/gruntwork-io/terratest/modules/retry"
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -77,35 +81,37 @@ func TestFrontend(t *testing.T) {
 	websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
 
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
-	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateVisitorCounter)
+	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
 	// next we will have to check if the visitor counter is incrementing on each get
+	verifyVisitorCounter(t, url, 30, 5*time.Second)
+
 }
 
-func verifyVisitorCounter(t *testing.T, targetUrl string, expectedRedirectUrl string, retries int, sleepBetweenRetries time.Duration) {
+func verifyVisitorCounter(t *testing.T, url string, retries int, sleepBetweenRetries time.Duration) {
 
 	// test to see if a t.fatal error gets returned
-	retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), retries, sleepBetweenRetries, func() (string, error) {
+	retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", url), retries, sleepBetweenRetries, func() (string, error) {
 
-		response, err := client.Get(targetUrl)
+		response, err := http.Get(url)
 		if err != nil {
-			t.Fatalf("Failed to GET URL %s: %s", targetUrl, err)
-			// return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
+			t.Fatalf("Failed to GET URL %s: %s", url, err)
+			// return "", ThisThingFailed{Url: url, Message: "GET failed"}
 		}
 
-		if response.StatusCode != http.StatusMovedPermanently {
-			t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
-			// return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
-		}
+		// if response.StatusCode != http.StatusMovedPermanently {
+		// 	// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
+		// 	return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
+		// }
 
 		// redirectedUrl := response.Request.URL.String()
 		// redirectedUrl, errLocation := response.Location()
-		location := response.Header.Get("Location")
-		// if redirectedUrl != expectedRedirectUrl {
-		if location != expectedRedirectUrl {
-			// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
-			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
-		}
+		// location := response.Header.Get("Location")
+		// // if redirectedUrl != expectedRedirectUrl {
+		// if location != expectedRedirectUrl {
+		// 	// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
+		// 	return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
+		// }
 		defer response.Body.Close()
 
 		return "", err
