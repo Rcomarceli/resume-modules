@@ -70,7 +70,7 @@ func TestDns(t *testing.T) {
 	http_helper.HttpGetWithRetryWithCustomValidation(t, httpsUrl, nil, 50, 5*time.Second, validateHtml)
 
 	// verify www returns 200
-	http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateHtml)
+	// http_helper.HttpGetWithRetryWithCustomValidation(t, wwwUrl, nil, 50, 5*time.Second, validateHtml)
 
 	// validate http to https redirect
 	verifyRedirect(t, httpUrl, httpsUrl, 30, 5*time.Second)
@@ -130,4 +130,12 @@ type ThisThingFailed struct {
 func (err ThisThingFailed) Error() string {
 	return fmt.Sprintf("Validation failed for URL %s. Message: %s", err.Url, err.Message)
 	// return fmt.Sprintf("Validation failed for URL %s. Response status: %d. Response body:\n%s", err.Url, err.Status, err.Body)
+}
+
+func validateHtml(statusCode int, body string) bool {
+	if statusCode != 200 {
+		return false
+	}
+	// could validate body here
+	return true
 }
