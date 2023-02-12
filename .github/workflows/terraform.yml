@@ -38,7 +38,7 @@ jobs:
       - name: Download Go Modules for Unit Tests
         working-directory: tests/unit
         run: go mod download
-      - name: Run Go Tests
+      - name: Run Unit Tests
         working-directory: tests/unit
         run: go test -v -tags=unit
         env:
@@ -49,7 +49,7 @@ jobs:
       - name: Download Go Modules for Integration Tests
         working-directory: tests/integration
         run: go mod download
-      - name: Run Go Tests
+      - name: Run Integration Tests
         working-directory: tests/integration
         run: go test -v -tags=integration
         env:
