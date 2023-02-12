@@ -78,8 +78,7 @@ func TestFrontendBackend(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// Run `terraform output` to get the IP of the instance
-	// websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
-	websiteEndpoint := "badurldf322c3cdsadcasdcasdcasdcas.com"
+	websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
 
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 
@@ -97,8 +96,7 @@ func verifyVisitorCounter(t *testing.T, url string, retries int, sleepBetweenRet
 
 		response, err := http.Get(url)
 		if err != nil {
-			t.Fatalf("Failed to GET URL %s: %s", url, err)
-			// return "", ThisThingFailed{Url: url, Message: "GET failed"}
+			return "", ThisThingFailed{Url: url, Message: "GET failed"}
 		}
 
 		// if response.StatusCode != http.StatusMovedPermanently {
