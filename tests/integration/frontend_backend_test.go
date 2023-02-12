@@ -18,7 +18,7 @@ import (
 )
 
 // we will override terraform variables with github secrets for testing
-func TestFrontend(t *testing.T) {
+func TestFrontendBackend(t *testing.T) {
 	t.Parallel()
 
 	// append unique names to given variables for terraform
@@ -79,7 +79,7 @@ func TestFrontend(t *testing.T) {
 
 	// Run `terraform output` to get the IP of the instance
 	// websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
-	websiteEndpoint := "badurl.com"
+	websiteEndpoint := "badurldf322c3"
 
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
