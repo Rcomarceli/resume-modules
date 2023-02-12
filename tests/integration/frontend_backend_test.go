@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"io/ioutil"
+	// "io/ioutil"
 	"net/http"
 
 	"strings"
