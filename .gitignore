@@ -10,3 +10,4 @@ frontend/src/index.html
 creds.tf
 test_output.log
 test_output/
+node_modules/
