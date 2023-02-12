@@ -79,7 +79,7 @@ func TestFrontendBackend(t *testing.T) {
 
 	// Run `terraform output` to get the IP of the instance
 	// websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
-	websiteEndpoint := "badurldf322c3"
+	websiteEndpoint := "badurldf322c3cdsadcasdcasdcasdcas.com"
 
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 
