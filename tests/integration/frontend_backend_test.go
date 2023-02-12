@@ -85,7 +85,7 @@ func TestFrontendBackend(t *testing.T) {
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
 	// next we will have to check if the visitor counter is incrementing on each get
-	verifyVisitorCounter(t, url, 30, 5*time.Second)
+	verifyVisitorCounter(t, url, 5, 5*time.Second)
 
 }
 
