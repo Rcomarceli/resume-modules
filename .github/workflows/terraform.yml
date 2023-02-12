@@ -45,6 +45,17 @@ jobs:
         # need to add other environment variables here, esp for cloudflare testing
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Download Go Modules for Integration Tests
+        working-directory: tests/integration
+        run: go mod download
+      - name: Run Go Tests
+        working-directory: tests/integration
+        run: go test -v -tags=integration
+        env:
+        # need to add other environment variables here, esp for cloudflare testing
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_DOMAIN: ${{ vars.CLOUDFLARE_DOMAIN }}
