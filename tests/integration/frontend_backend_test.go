@@ -5,15 +5,18 @@ import (
 	"testing"
 	"time"
 
+	"io/ioutil"
 	"net/http"
 
 	"strings"
 
+	"golang.org/x/net/html"
+
 	// http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
-	"github.com/gruntwork-io/terratest/modules/retry"
-
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
@@ -98,21 +101,29 @@ func verifyVisitorCounter(t *testing.T, url string, retries int, sleepBetweenRet
 		if err != nil {
 			return "", ThisThingFailed{Url: url, Message: "GET failed"}
 		}
-
-		// if response.StatusCode != http.StatusMovedPermanently {
-		// 	// t.Fatalf("Expected HTTP status code %d but got %d", http.StatusMovedPermanently, response.StatusCode)
-		// 	return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
-		// }
-
-		// redirectedUrl := response.Request.URL.String()
-		// redirectedUrl, errLocation := response.Location()
-		// location := response.Header.Get("Location")
-		// // if redirectedUrl != expectedRedirectUrl {
-		// if location != expectedRedirectUrl {
-		// 	// t.Fatalf("Expected URL to redirect to %s but got %s", expectedRedirectUrl, redirectedUrl)
-		// 	return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
-		// }
 		defer response.Body.Close()
+
+		// Read the response body
+		// _, err := ioutil.ReadAll(response.Body)
+		// if err != nil {
+		// 	return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Error reading response body: %s", err)}
+		// }
+
+		// Parse the HTML response
+		// doc, err := html.Parse(resp.Body)
+		doc, err := html.Parse(response.Body)
+		if err != nil {
+			return "", ThisThingFailed{Url: url, Message: fmt.Sprintf("Error parsing HTML: %s", err)}
+		}
+
+		// Search for the span tag with id "visitorCount"
+		visitorCount := searchForSpanTag(doc, "visitorCount")
+		if visitorCount == nil {
+			return "", ThisThingFailed{Url: url, Message: "Span tag with id 'visitorCount' not found"}
+		}
+
+		// Print the contents of the span tag
+		logger.Logf(t, "Visitor count: %s", visitorCount.FirstChild.Data)
 
 		return "", err
 	})
@@ -121,4 +132,20 @@ func verifyVisitorCounter(t *testing.T, url string, retries int, sleepBetweenRet
 	// 	return err
 	// }
 
+}
+
+func searchForSpanTag(n *html.Node, id string) *html.Node {
+	if n.Type == html.ElementNode && n.Data == "span" {
+		for _, a := range n.Attr {
+			if a.Key == "id" && a.Val == id {
+				return n
+			}
+		}
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if result := searchForSpanTag(c, id); result != nil {
+			return result
+		}
+	}
+	return nil
 }
