@@ -55,9 +55,9 @@ module "dns" {
   source = "../../dns"
 
   # in live, these are defined in terraform cloud. for testing, we define them via repo secrets/variables
-  environment        = var.environment
-  cloudflare_zone_id = var.cloudflare_zone_id
-  cloudflare_domain  = var.cloudflare_domain
+  environment           = var.environment
+  cloudflare_zone_id    = var.cloudflare_zone_id
+  cloudflare_domain     = var.cloudflare_domain
   cloudflare_account_id = var.cloudflare_account_id
   website_endpoint      = module.frontend.website_endpoint
 }
