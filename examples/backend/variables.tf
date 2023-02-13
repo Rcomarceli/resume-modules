@@ -3,13 +3,6 @@
 # You must provide a value for each of these parameters.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# lambda bucket name here. 
-
-# resource "random_pet" "lambda_bucket_name" {
-#   prefix = "terraform-lambda"
-#   length = 4
-# }
-
 variable "environment" {
   description = "The name of the environment we're deploying to. Either Sandbox, Dev, or Prod"
   type        = string

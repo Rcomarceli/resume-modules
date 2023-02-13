@@ -33,7 +33,6 @@ resource "cloudflare_record" "site_cname" {
 # https://developers.cloudflare.com/pages/how-to/www-redirect/
 
 # note that since only 1 record of this can exist concurrently, we cant use this with a subdomain for testing
-# to test this one redirect, had to buy another domain for testing 
 resource "cloudflare_record" "www" {
   zone_id = var.cloudflare_zone_id
   name    = "www"
@@ -43,71 +42,6 @@ resource "cloudflare_record" "www" {
   proxied = true
 }
 
-
-# requires edit permissions account.bulk url redirects? account.filter lists
-# cloudflare likes to add a "/" to the end of the source_url even if we don't put it there
-# so we add a "/" to the end. if not, we keep getting errors where terraform will keep trying to update this resource in place.
-# reworking www redirect portion to just be zone level because account level redirect cant be tested without collision
-
-# resource "cloudflare_list" "www" {
-#   account_id  = var.cloudflare_account_id
-#   name        = "wwwredirect_${var.environment}"
-#   description = "redirects www to non-www"
-#   kind        = "redirect"
-
-#   item {
-#     value {
-#       redirect {
-#         source_url            = "www.${var.cloudflare_domain}/"
-#         target_url            = "https://${var.cloudflare_domain}"
-#         include_subdomains    = "disabled"
-#         subpath_matching      = "enabled"
-#         status_code           = 301
-#         preserve_query_string = "enabled"
-#         preserve_path_suffix  = "enabled"
-#       }
-#     }
-#   }
-# }
-
-# this rework changes it so we have edit permission over zone level redirects. Zone.dynamic redirect edit? Page Rules? Workers Routes? Transform RUles?
-# Zone WAF? Config Rules?
-# origin rules? Zone?
-
-# maybe it isnt the perms and the redirect needs to be dynamic
-# per https://community.cloudflare.com/t/which-permission-s-are-needed-to-list-zone-rulesets-in-a-given-phase/433374
-# need write permissions on zone transform rules and managed headers
-# added api gateway, access apps, apps, botmanagement, cache rules, custom error rules, custom pages, disable esc
-# email routing rules, firewall services
-
-# http ddos managed, health checks, load balancers, logs, page shield
-# ssl and certs, sanitize, waiting room, web3 hostnames, zaraz
-# these are literally every single zone permission for the token that can be granted
-
-# resource "cloudflare_ruleset" "www" {
-#   # account_id  = var.cloudflare_account_id
-#   zone_id  = var.cloudflare_zone_id
-#   name        = "redirects_${var.environment}"
-#   description = "Redirect ruleset change description just in case"
-#   kind        = "zone"
-#   phase       = "http_request_dynamic_redirect"
-
-#   rules {
-#     action = "redirect"
-#     action_parameters {
-#       from_value {
-#         status_code = 301
-#         target_url {
-#           value = "/contacts/"
-#         }
-#         preserve_query_string = false
-#       }
-#     }
-#     expression  = "(http.request.uri.path matches \"^/contact-us/\")"
-#     description = "Redirect visitors still using old URL"
-#     enabled     = true
-#   }
-# }
 
 resource "cloudflare_page_rule" "www" {
   zone_id = var.cloudflare_zone_id
@@ -121,51 +55,6 @@ resource "cloudflare_page_rule" "www" {
     }
   }
 }
-
-# it turns out my entire issue was that i was putting my zone id into account id
-# resource "cloudflare_ruleset" "www" {
-#   # account_id  = var.cloudflare_account_id
-#   zone_id     = var.cloudflare_zone_id
-#   name        = "redirects_${var.environment}"
-#   description = "Redirect ruleset change description just in case"
-#   kind        = "zone"
-#   # kind        = "root"
-#   phase = "http_request_dynamic_redirect"
-
-#   rules {
-#     action = "redirect"
-#     action_parameters {
-#       from_list {
-#         name = cloudflare_list.www.name
-#         key  = "http.request.full_uri"
-#       }
-#     }
-
-#     # action_parameters {
-#     #   from_value {
-#     #     status_code = 301
-#     #     target_url {
-#     #       value = "/contacts/"
-#     #     }
-#     #     preserve_query_string = false
-#     #   }
-#     # }
-
-#     # expression below is interpreted. we want a literal "$name_of_cloudflare_list"
-#     # but double $'s is a special escape sequence in HCL
-#     # so we opt for this redundant way to preserve the $ in front
-#     # and the interpolated cloudflare_list.www_name after that
-
-
-#     expression  = "http.request.full_uri in ${"$"}${cloudflare_list.www.name}"
-#     description = "Apply redirects from redirect list"
-#     enabled     = true
-
-#     # expression  = "(http.request.uri.path matches \"^/contact-us/\")"
-#     # description = "Redirect visitors still using old URL"
-#     # enabled     = true
-#   }
-# }
 
 # ensure API key has edit permissions for: Zone Settings
 # Looks like you encounter a bug if you attempt to use this and have an initial failure (such as permissions),
@@ -187,7 +76,7 @@ resource "cloudflare_zone_settings_override" "application" {
 # source https://advancedweb.hu/how-to-route-to-an-arbitrary-s3-bucket-website-with-cloudflare-workers/
 # ensure that your API key has Edit Permissions: Account.Workers KV Storage?, Account.Workers Scripts, Zone.Worker Routes or else youll get Authentication errors (10000)
 
-# currently, there is no terraform support for different environments
+# currently, there is no terraform support for different environments in cloudflare
 # we will need to append our environment variable to the name instead
 resource "cloudflare_worker_script" "change_header" {
   account_id = var.cloudflare_account_id
@@ -206,35 +95,3 @@ resource "cloudflare_worker_route" "change_header" {
   pattern     = "${var.cloudflare_domain}/*"
   script_name = cloudflare_worker_script.change_header.name
 }
-
-# edit bucket to allow for cloudflare access
-# refactor this so we add it on to the existing bucket permissions rather than defining the entire thing
-
-# resource "aws_s3_bucket_policy" "allow_access_from_cloudflare" {
-#   bucket = var.website_bucket_id
-#   policy = data.aws_iam_policy_document.allow_access_from_cloudflare.json
-# }
-
-# data "aws_iam_policy_document" "allow_access_from_cloudflare" {
-#   statement {
-#     sid    = "PublicReadGetObject"
-#     effect = "Allow"
-#     principals {
-#       type        = "*"
-#       identifiers = ["*"]
-#     }
-#     actions = [
-#       "s3:GetObject"
-#     ]
-#     resources = [
-#       "${var.website_bucket_arn}/*"
-#       # aws_s3_bucket.application.arn,
-#     ]
-#     condition {
-#       test     = "IpAddress"
-#       variable = "aws:SourceIp"
-
-#       values = local.cloudflare_ip_range
-#     }
-#   }
-# }

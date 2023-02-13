@@ -43,15 +43,10 @@ func TestFrontend(t *testing.T) {
 
 	// Run `terraform output` to get the IP of the instance
 	websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
-	// websiteEtag := terraform.Output(t, terraformOptions, "website_html_etag")
 
-	// note that this check for the rendered html file only works because we arent expecting any content to change in an isolated test without any lambda function
-	// https://github.com/gruntwork-io/terratest/issues/200
-	// Make an HTTP request to the instance and make sure we get back a 200 OK with the body "Hello, World!"
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
-	// http_helper.HttpGetWithRetry(t, url, nil, 200, nil, 10, 5*time.Second)
-	// http_helper.HttpGetWithRetry(t, url, nil, 200, "Hello, World!", 30, 5*time.Second)
+\
 }
 
 func validateHtml(statusCode int, body string) bool {

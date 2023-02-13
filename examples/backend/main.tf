@@ -31,7 +31,6 @@ resource "random_pet" "lambda_bucket_name" {
 
 module "backend" {
   source = "../../backend"
-  # source = "${path.module}/../backend"
 
   scope_permissions_arn       = var.scope_permissions_arn
   update_visitor_counter_path = var.update_visitor_counter_path

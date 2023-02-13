@@ -31,12 +31,8 @@ resource "random_pet" "website_bucket_name" {
 
 module "frontend" {
   source = "../../frontend"
-  # source = "${path.module}/../frontend"
 
   website_bucket_name = random_pet.website_bucket_name.id
   api_url             = var.api_url
   allowed_ip_range    = var.allowed_ip_range
-  #   api_url     = module.backend.api_url
-  #   bucket_name = random_pet.website_bucket_name.id
-  # environment = var.environment
 }

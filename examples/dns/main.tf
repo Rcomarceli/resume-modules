@@ -43,7 +43,6 @@ provider "cloudflare" {
 
 module "frontend" {
   source = "../../frontend"
-  #   source = "${path.module}/../frontend"
 
   #  api url wont be tested, so it can be a fake URL in this case
   api_url             = var.api_url
@@ -54,15 +53,18 @@ module "frontend" {
 
 module "dns" {
   source = "../../dns"
-  #   source = "${path.module}/../dns"
 
-  # all defined in the terraform cloud org as environment variables
+  # in live, these are defined in terraform cloud. for testing, we define them via repo secrets/variables
   environment        = var.environment
   cloudflare_zone_id = var.cloudflare_zone_id
   cloudflare_domain  = var.cloudflare_domain
-  # cloudflare_api_token  = var.cloudflare_api_token
   cloudflare_account_id = var.cloudflare_account_id
   website_endpoint      = module.frontend.website_endpoint
-  # website_bucket_arn    = module.frontend.website_bucket_arn
-  # website_bucket_id     = module.frontend.website_bucket_id
+}
+
+module "www" {
+  source = "../../www"
+
+  cloudflare_zone_id = var.cloudflare_zone_id
+  cloudflare_domain  = var.cloudflare_domain
 }
