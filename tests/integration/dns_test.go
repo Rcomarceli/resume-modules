@@ -79,16 +79,16 @@ func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, 
 
 		response, err := client.Get(targetUrl)
 		if err != nil {
-			return "", ThisThingFailed{Url: targetUrl, Message: "GET failed"}
+			return "", NonFatalError{Url: targetUrl, Message: "GET failed"}
 		}
 
 		if response.StatusCode != http.StatusMovedPermanently {
-			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
+			return "", NonFatalError{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
 		}
 
 		location := response.Header.Get("Location")
 		if location != expectedRedirectUrl {
-			return "", ThisThingFailed{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
+			return "", NonFatalError{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
 		}
 		defer response.Body.Close()
 
@@ -97,12 +97,12 @@ func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, 
 
 }
 
-type ThisThingFailed struct {
+type NonFatalError struct {
 	Url     string
 	Message string
 }
 
-func (err ThisThingFailed) Error() string {
+func (err NonFatalError) Error() string {
 	return fmt.Sprintf("Validation failed for URL %s. Message: %s", err.Url, err.Message)
 }
 

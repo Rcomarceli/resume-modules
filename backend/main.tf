@@ -90,9 +90,8 @@ resource "aws_cloudwatch_log_group" "update_visitor_counter" {
 
   retention_in_days = 30
 }
-# https://stackoverflow.com/questions/73771271/i-am-getting-issue-in-policy-document-length-breaking-cloudwatch-logs-constraint
+
 resource "aws_iam_role" "lambda_exec" {
-  # name = "serverless_lambda"
   name = var.lambda_iam_role_name
 
   assume_role_policy = jsonencode({
@@ -149,15 +148,12 @@ resource "aws_iam_role_policy_attachment" "database_access" {
 
 # api
 resource "aws_apigatewayv2_api" "lambda" {
-  # name          = "serverless_lambda_gw"
   name          = var.api_gateway_name
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
-
-  # name        = "serverless_lambda_stage"
   name        = var.api_gateway_stage_name
   auto_deploy = true
 

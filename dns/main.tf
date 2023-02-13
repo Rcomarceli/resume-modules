@@ -18,6 +18,9 @@ terraform {
 }
 
 # this module depends on a frontend module for testing, since we need to point the domain name to an actual website
+# Permissions for Token on Cloudflare:
+# Account: Workers Scripts
+# Zone: Page Rules, Dynamic Redirect, Zone Settings, Page Rules, DNS, Workers Routes
 
 resource "cloudflare_record" "site_cname" {
   zone_id = var.cloudflare_zone_id
@@ -29,7 +32,6 @@ resource "cloudflare_record" "site_cname" {
   proxied = true
 }
 
-# ensure API key has edit permissions for: Zone Settings
 # Looks like you encounter a bug if you attempt to use this and have an initial failure (such as permissions),
 # Once you fix the config issue, you'll run into issues where it'll flag read-only resources being attempted to be written over
 # removing this resource via "terraform rm cloudflare_zone_settings_override.application" and applying again is a work around
@@ -47,10 +49,9 @@ resource "cloudflare_zone_settings_override" "application" {
 # The problem is that aws uses the host header to determine what the bucket should be if being redirected. in our case, it was looking for a bucket called "rcmarceli.com"
 # a work around is to rename our bucket to always be rcmarceli.com, or to use cloudflare workers to change how the website is fetched
 # source https://advancedweb.hu/how-to-route-to-an-arbitrary-s3-bucket-website-with-cloudflare-workers/
-# ensure that your API key has Edit Permissions: Account.Workers KV Storage?, Account.Workers Scripts, Zone.Worker Routes or else youll get Authentication errors (10000)
 
-# currently, there is no terraform support for different environments in cloudflare
-# we will need to append our environment variable to the name instead
+# currently, there is no terraform support for different environments in cloudflare due to cloudflare's own API
+# we will need to append our environment variable to the name instead, which mimics cloudflare's own handling of envs
 resource "cloudflare_worker_script" "change_header" {
   account_id = var.cloudflare_account_id
   name       = "terraform-change-resume-host-header-${var.environment}"
