@@ -46,7 +46,7 @@ func TestFrontend(t *testing.T) {
 
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
-\
+
 }
 
 func validateHtml(statusCode int, body string) bool {
