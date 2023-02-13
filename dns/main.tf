@@ -29,33 +29,6 @@ resource "cloudflare_record" "site_cname" {
   proxied = true
 }
 
-# www to non-www redirect
-# https://developers.cloudflare.com/pages/how-to/www-redirect/
-
-# note that since only 1 record of this can exist concurrently, we cant use this with a subdomain for testing
-resource "cloudflare_record" "www" {
-  zone_id = var.cloudflare_zone_id
-  name    = "www"
-  value   = "100::"
-  type    = "AAAA"
-
-  proxied = true
-}
-
-
-resource "cloudflare_page_rule" "www" {
-  zone_id = var.cloudflare_zone_id
-  target  = "www.${var.cloudflare_domain}/*"
-
-  actions {
-    forwarding_url {
-      # $1 allows us to match and keep any routes
-      url         = "https://${var.cloudflare_domain}/$1"
-      status_code = 301
-    }
-  }
-}
-
 # ensure API key has edit permissions for: Zone Settings
 # Looks like you encounter a bug if you attempt to use this and have an initial failure (such as permissions),
 # Once you fix the config issue, you'll run into issues where it'll flag read-only resources being attempted to be written over
