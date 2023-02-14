@@ -21,7 +21,7 @@ import (
 // we will use environment-variables here that *should* be defined in our github repo
 // this is a integration test since unit testing with just DNS doesn't test a whole lot
 
-func TestDns(t *testing.T) {
+func TestDnsAndWww(t *testing.T) {
 	t.Parallel()
 
 	uniqueId := random.UniqueId()
