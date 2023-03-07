@@ -18,14 +18,6 @@ resource "aws_s3_bucket" "application" {
   bucket = var.website_bucket_name
 }
 
-# resource "aws_s3_bucket_acl" "application" {
-#   bucket = aws_s3_bucket.application.id
-
-#   acl = "public-read"
-# }
-
-
-
 resource "aws_s3_bucket_policy" "application" {
   bucket = aws_s3_bucket.application.id
   policy = data.aws_iam_policy_document.application.json
@@ -44,13 +36,10 @@ data "aws_iam_policy_document" "application" {
     ]
     resources = [
       "${aws_s3_bucket.application.arn}/*"
-      # aws_s3_bucket.application.arn,
     ]
     condition {
       test     = "IpAddress"
       variable = "aws:SourceIp"
-
-      # values = local.cloudflare_ip_range
       values = var.allowed_ip_range
     }
   }
