@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "application" {
     condition {
       test     = "IpAddress"
       variable = "aws:SourceIp"
-      values = var.allowed_ip_range
+      values   = var.allowed_ip_range
     }
   }
 }
@@ -57,14 +57,6 @@ resource "aws_s3_bucket_website_configuration" "application" {
     key = "error.html"
   }
 
-  # routing_rule {
-  #   condition {
-  #     key_prefix_equals = "docs/"
-  #   }
-  #   redirect {
-  #     replace_key_prefix_with = "documents/"
-  #   }
-  # }
 }
 
 resource "aws_s3_object" "html_index" {
