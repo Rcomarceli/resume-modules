@@ -9,4 +9,4 @@ API_URL=$(jq -r '.testjsonkey')
 echo "VITE_API_URL=$API_URL" > .env.local
 
 # build vite and also echo the destination folder "dist" for terraform to use
-npm ci && npm run build >&2 && echo "{\"dest\": \"dist\"}"
+npm ci && npm run build >&2 && echo -n "{\"dest\": \"dist\"}"
