@@ -61,7 +61,7 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 
 # this basically forces the code to only run on linux
-data "external" "frontend_build" {
+data "external" "application" {
   program = ["bash", "-c", <<EOT
 (npm ci && npm run build -- --env.PARAM="$(jq -r '.API_URL')") >&2 && echo "{\"dest\": \"dist\"}"
 EOT
@@ -73,12 +73,12 @@ EOT
 }
 
 resource "aws_s3_bucket_object" "application" {
-  for_each = fileset("${data.external.frontend_build.working_dir}/${data.external.frontend_build.result.dest}", "*")
+  for_each = fileset("${data.external.application.working_dir}/${data.external.application.result.dest}", "*")
   key      = each.value
-  source   = "${data.external.frontend_build.working_dir}/${data.external.frontend_build.result.dest}/${each.value}"
-  bucket   = aws_s3_bucket.frontend_bucket.bucket
+  source   = "${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}"
+  bucket   = aws_s3_bucket.application.bucket
 
-  etag = filemd5("${data.external.frontend_build.working_dir}/${data.external.frontend_build.result.dest}/${each.value}")
+  etag = filemd5("${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}")
   # content_type = lookup(local.mime_type_mappings, concat(regexall("\\.([^\\.]*)$", each.value), [[""]])[0][0], "application/octet-stream")
 
   # compare file extension to known file extension mime types, default to application/octet if not found
