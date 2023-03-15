@@ -9,7 +9,8 @@ API_URL=$(jq -r '.testjsonkey')
 echo "VITE_API_URL=$API_URL" > .env.local
 
 # build vite and also echo the destination folder "dist" for terraform to use
-npm ci && npm run build 
+# redirect output to err stream since terraform will latch onto the first stdout output for a response
+(npm ci && npm run build) >&2 
 
 # create a json object to pass back to terraform
 # echo -n "{\"dest\": \"dist\"}"
