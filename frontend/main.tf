@@ -64,13 +64,17 @@ resource "aws_s3_bucket_website_configuration" "application" {
 # generates env file for our vite build. used to inject the api_url when building in the pipeline
 # outputs a "dest" value that points to our "dist" build folder
 data "external" "application" {
-  program = ["bash", "${path.module}/src/envGenerate.sh"]
-
+ program = ["bash", "-c", <<EOT
+  echo "VITE_API_URL=$(jq -r '.API_URL')" > .env.local && (npm ci && npm run build) >&2 && echo "{\"dest\": \"dist\"}"
+  EOT
+  ]
   working_dir = "${path.module}/src"
   query = {
     API_URL = var.api_url
   }
 }
+
+
 
 
 resource "aws_s3_bucket_object" "application" {
