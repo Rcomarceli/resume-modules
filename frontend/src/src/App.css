@@ -1,0 +1,215 @@
+
+.two-column {
+  display: flex;
+  flex-wrap: wrap;
+  -moz-box-pack: justify;
+  justify-content: space-between;
+}
+
+.app-core{
+  box-sizing: border-box;
+  top: 0px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0px auto;
+  padding: 0px 20px;
+}
+
+.other-column-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+:root {
+  --nav-size: 60px;
+  --white: #e6f1ff;
+  --gold: #ffbe4d;
+  --border-radius: 4px;
+  --black: #161922;
+  --black2: #333333;
+  --black3: #090c14;
+  --fz-xs: 13px;
+  --font-mono: 'SF Mono','Fira Code','Fira Mono','Roboto Mono',monospace;
+  --lightest-navy: #233554;
+  --tab-height: 42px;
+  --tab-width: 120px;
+  --speed: 500ms;
+}
+
+a {
+  all: unset;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* hero section */
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px 0px 10px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+h1 {
+  font-size: 2.5em;
+}
+
+.big-header {
+  font-size: clamp(40px, 8vw, 65px);
+  margin: 0px;
+}
+
+.big-header span {
+  color: var(--gold);
+}
+
+.heroSection {
+  display: flex;
+  -moz-box-pack: center;
+  justify-content: center;
+  -moz-box-align: center;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 85vh;
+  height: 88vh;
+  padding: 0px;
+  padding-left: 5px;
+
+  margin: 5px auto;
+  max-width: 1000px;
+  
+}
+
+.heroSection span {
+  color: var(--gold);
+}
+
+.resume-link {
+  color: #20222b;
+  background-color: var(--gold);
+  border-radius: var(--border-radius);
+  padding: 1.25rem 1.75rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 50px;
+}
+
+.column {
+  flex: 1; /* set flex property to 1 to make both columns equal width */
+  margin: 10px; /* add margin for spacing between columns */
+}
+
+
+.cert-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+button {
+  cursor: pointer;
+  border: 0px none;
+  border-radius: 0px;
+}
+
+.contactMe {
+  padding-top: 10px;
+}
+
+.contactMe-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.contactMe-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.certCard {
+  aspect-ratio: 1 / 1.6;
+  border: 0.3vmin solid var(--gold);
+  cursor: pointer;
+  position: relative;
+  width: 20vmin;
+}
+
+.hexagon {
+  color: #6C6;
+  font-size: 135px;
+}
+
+.autofit-image{
+  max-width:100%;
+  max-height:100%;
+  object-fit: contain;
+  height: 200px; 
+}
+
+.resume-left {
+  margin: 50px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+section {
+  padding: 80px 0px;
+}
+
+.no-scroll {
+  overflow: hidden !important;
+ }
+
+.resume-heading {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.resume-left svg {
+  font-size: 32px; 
+  margin-right: 8px;
+}
+
+@media (max-width: 700px) {
+  .contactMe-container {
+    margin-bottom: 40px;
+  }
+}
+
+
+/* mobile */
+
+@media (max-width: 600px) {
+  .autofit-image {
+    height: 150px;
+  }
+
+  .app-core {
+    padding: 0px 15px;
+  }
+}
+
+.visitorCounter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 40px;
+}
+

@@ -59,23 +59,31 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 }
 
-resource "aws_s3_object" "html_index" {
-  bucket = aws_s3_bucket.application.id
-  key    = "index.html"
-  # source = "${path.module}/src/index.html"
-  content = templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url })
-  # content type defaults to binary/octetstream which prompts the user to download the html file rather than view it
-  content_type = "text/html"
 
-  # etag = filemd5("${path.module}/src/index.html")
-  etag = md5(templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url }))
+# this basically forces the code to only run on linux
+# generates env file for our vite build. used to inject the api_url when building in the pipeline
+# outputs a "dest" value that points to our "dist" build folder
+data "external" "application" {
+  program = ["bash", "${path.module}/src/generateEnv.sh"]
+
+  working_dir = "${path.module}/src"
+  query = {
+    API_URL = var.api_url
+  }
 }
 
-resource "aws_s3_object" "css" {
-  bucket       = aws_s3_bucket.application.id
-  key          = "index.css"
-  source       = "${path.module}/src/index.css"
-  content_type = "text/css"
 
-  etag = filemd5("${path.module}/src/index.css")
+resource "aws_s3_bucket_object" "application" {
+  for_each = fileset("${data.external.application.working_dir}/${data.external.application.result.dest}", "*")
+  key      = each.value
+  source   = "${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}"
+  bucket   = aws_s3_bucket.application.bucket
+
+  etag = filemd5("${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}")
+  # content_type = lookup(local.mime_type_mappings, concat(regexall("\\.([^\\.]*)$", each.value), [[""]])[0][0], "application/octet-stream")
+
+  # compare file extension to known file extension mime types, default to application/octet if not found
+  content_type = lookup(local.mime_type_mappings, regex("\\.[0-9a-z]+$", each.value), "application/octet-stream")
 }
+
+# source: https://advancedweb.hu/how-to-deploy-a-single-page-application-with-terraform/
