@@ -7,8 +7,6 @@ import './Navbar.css'
 import { projectData } from './projects';
 import { workExperienceData } from './workexperience';
 import { educationData } from './education';
-import { API_URL } from './api_url.json';
-
 
 import ccnaBadge from './assets/ccna.png';
 import secplusBadge from './assets/securityplus.svg';
@@ -25,6 +23,8 @@ const linkedInUrl = "https://www.linkedin.com/in/rmarceli/";
 const gitHubUrl = "https://github.com/Rcomarceli";
 
 const resumeArticleUrl = "https://www.linkedin.com/pulse/cloud-resume-challenge-how-i-used-terraform-aws-deploy-roy-marcelino/"
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface NavButtonProps {
   children?: ReactNode;
