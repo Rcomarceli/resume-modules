@@ -66,7 +66,7 @@ resource "aws_s3_bucket_website_configuration" "application" {
 data "external" "application" {
   program = ["bash", "${path.module}/src/generateEnv.sh"]
 
-  working_dir = "${path.module}/src"
+  # working_dir = "${path.module}/src"
   query = {
     API_URL = var.api_url
   }
