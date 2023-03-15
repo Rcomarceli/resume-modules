@@ -4,7 +4,7 @@
 
 set -e
 
-API_URL=$(jq -r '.testjsonkey')
+API_URL=$(jq -r '.API_URL')
 
 echo "VITE_API_URL=$API_URL" > .env.local
 
