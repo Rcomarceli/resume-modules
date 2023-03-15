@@ -61,16 +61,19 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 
 # this basically forces the code to only run on linux
+# generates env file for our vite build. used to inject the api_url when building in the pipeline
 data "external" "application" {
-  program = ["bash", "-c", <<EOT
-(npm ci && npm run build -- --env.PARAM="$(jq -r '.API_URL')") >&2 && echo "{\"dest\": \"dist\"}"
-EOT
-  ]
+  program = ["bash", "${path.module}/generateEnv.sh"]
+  #   program = ["bash", "-c", <<EOT
+  # (npm ci && npm run build -- --env.PARAM="$(jq -r '.API_URL')") >&2 && echo "{\"dest\": \"dist\"}"
+  # EOT
+  #   ]
   working_dir = "${path.module}/src"
   query = {
-    API_URL = "badurl.local"
+    API_URL = var.api_url
   }
 }
+
 
 resource "aws_s3_bucket_object" "application" {
   for_each = fileset("${data.external.application.working_dir}/${data.external.application.result.dest}", "*")
