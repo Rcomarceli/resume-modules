@@ -53,6 +53,10 @@ func validateHtml(statusCode int, body string) bool {
 	if statusCode != 200 {
 		return false
 	}
+	
+	if !body.Contains("Roy") {
+		return false
+	}
 	// could validate body here
 	return true
 }

@@ -9,6 +9,7 @@ creds.tf
 test_output.log
 test_output/
 node_modules/
+cypress/
 
 .env
 *.local
