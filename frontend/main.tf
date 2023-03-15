@@ -66,7 +66,7 @@ resource "aws_s3_bucket_website_configuration" "application" {
 data "external" "application" {
   program = ["bash", "${path.module}/src/generateEnv.sh"]
 
-  # working_dir = "${path.module}/src"
+  working_dir = "${path.module}/src"
   query = {
     API_URL = var.api_url
   }
@@ -80,7 +80,6 @@ resource "aws_s3_bucket_object" "application" {
   bucket   = aws_s3_bucket.application.bucket
 
   etag = filemd5("${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}")
-  # content_type = lookup(local.mime_type_mappings, concat(regexall("\\.([^\\.]*)$", each.value), [[""]])[0][0], "application/octet-stream")
 
   # compare file extension to known file extension mime types, default to application/octet if not found
   content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
