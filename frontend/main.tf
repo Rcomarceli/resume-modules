@@ -59,23 +59,53 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 }
 
-resource "aws_s3_object" "html_index" {
-  bucket = aws_s3_bucket.application.id
-  key    = "index.html"
-  # source = "${path.module}/src/index.html"
-  content = templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url })
-  # content type defaults to binary/octetstream which prompts the user to download the html file rather than view it
-  content_type = "text/html"
 
-  # etag = filemd5("${path.module}/src/index.html")
-  etag = md5(templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url }))
+# this basically forces the code to only run on linux
+data "external" "frontend_build" {
+  program = ["bash", "-c", <<EOT
+(npm ci && npm run build -- --env.PARAM="$(jq -r '.API_URL')") >&2 && echo "{\"dest\": \"dist\"}"
+EOT
+  ]
+  working_dir = "${path.module}/src"
+  query = {
+    API_URL = "badurl.local"
+  }
 }
 
-resource "aws_s3_object" "css" {
-  bucket       = aws_s3_bucket.application.id
-  key          = "index.css"
-  source       = "${path.module}/src/index.css"
-  content_type = "text/css"
+resource "aws_s3_bucket_object" "application" {
+  for_each = fileset("${data.external.frontend_build.working_dir}/${data.external.frontend_build.result.dest}", "*")
+  key      = each.value
+  source   = "${data.external.frontend_build.working_dir}/${data.external.frontend_build.result.dest}/${each.value}"
+  bucket   = aws_s3_bucket.frontend_bucket.bucket
 
-  etag = filemd5("${path.module}/src/index.css")
+  etag = filemd5("${data.external.frontend_build.working_dir}/${data.external.frontend_build.result.dest}/${each.value}")
+  # content_type = lookup(local.mime_type_mappings, concat(regexall("\\.([^\\.]*)$", each.value), [[""]])[0][0], "application/octet-stream")
+
+  # compare file extension to known file extension mime types, default to application/octet if not found
+  content_type = lookup(local.mime_type_mappings, regex("\\.[0-9a-z]+$", each.value), "application/octet-stream")
 }
+
+# resource "aws_s3_object" "html_index" {
+#   bucket = aws_s3_bucket.application.id
+#   key    = "index.html"
+#   # source = "${path.module}/src/index.html"
+#   content = templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url })
+#   # content type defaults to binary/octetstream which prompts the user to download the html file rather than view it
+#   content_type = "text/html"
+
+#   # etag = filemd5("${path.module}/src/index.html")
+#   etag = md5(templatefile("${path.module}/index.html.tftpl", { "api_url" = var.api_url }))
+# }
+
+
+
+# resource "aws_s3_object" "css" {
+#   bucket       = aws_s3_bucket.application.id
+#   key          = "index.css"
+#   source       = "${path.module}/src/index.css"
+#   content_type = "text/css"
+
+#   etag = filemd5("${path.module}/src/index.css")
+# }
+
+# source: https://advancedweb.hu/how-to-deploy-a-single-page-application-with-terraform/
