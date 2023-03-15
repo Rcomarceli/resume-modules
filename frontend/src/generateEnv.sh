@@ -10,4 +10,7 @@ echo "VITE_API_URL=$API_URL" > .env.local
 
 # build vite and also echo the destination folder "dist" for terraform to use
 npm ci && npm run build 
-echo -n "{\"dest\": \"dist\"}"
+
+# create a json object to pass back to terraform
+# echo -n "{\"dest\": \"dist\"}"
+jq -n --arg dest dist '{"dest":"dist"}'
