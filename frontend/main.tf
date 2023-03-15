@@ -68,7 +68,7 @@ data "external" "application" {
   echo "VITE_API_URL=$(jq -r '.API_URL')" > .env.local && (npm ci && npm run build) >&2 && echo "{\"dest\": \"dist\"}"
   EOT
   ]
-  working_dir = "${path.module}/src"
+  working_dir = "${path.module}/src/"
   query = {
     API_URL = var.api_url
   }
