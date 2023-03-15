@@ -83,7 +83,7 @@ resource "aws_s3_bucket_object" "application" {
   # content_type = lookup(local.mime_type_mappings, concat(regexall("\\.([^\\.]*)$", each.value), [[""]])[0][0], "application/octet-stream")
 
   # compare file extension to known file extension mime types, default to application/octet if not found
-  content_type = lookup(local.mime_type_mappings, regex("\\.[0-9a-z]+$", each.value), "application/octet-stream")
+  content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
 }
 
 # source: https://advancedweb.hu/how-to-deploy-a-single-page-application-with-terraform/
