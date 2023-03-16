@@ -20,88 +20,28 @@ import (
 func TestFrontend(t *testing.T) {
 	t.Parallel()
 
-	service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
-    if err != nil {
-        panic(err)
-    }
-    defer service.Stop()
+	wd := SetupSelenium();
 
-    caps := selenium.Capabilities{}
-    caps.AddChrome(chrome.Capabilities{Args: []string{
-        "window-size=1920x1080",
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
-        "disable-gpu",
-        "--headless",  // comment out this line to see the browser
-    }})
+	// service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
+    // if err != nil {
+    //     panic(err)
+    // }
+    // defer service.Stop()
 
-    wd, err := selenium.NewRemote(caps, "")
-    if err != nil {
-        panic(err)
-    }
+    // caps := selenium.Capabilities{}
+    // caps.AddChrome(chrome.Capabilities{Args: []string{
+    //     "window-size=1920x1080",
+    //     "--no-sandbox",
+    //     "--disable-dev-shm-usage",
+    //     "disable-gpu",
+    //     "--headless",  // comment out this line to see the browser
+    // }})
 
-    wd.Get("https://www.google.com")
-	
-	if err := wd.Get("http://play.golang.org/?simple=1"); err != nil {
-		panic(err)
-	}
+    // wd, err := selenium.NewRemote(caps, "")
+    // if err != nil {
+    //     panic(err)
+    // }
 
-	// Get a reference to the text box containing code.
-	elem, err := wd.FindElement(selenium.ByCSSSelector, "#code")
-	if err != nil {
-		panic(err)
-	}
-	// Remove the boilerplate code already in the text box.
-	if err := elem.Clear(); err != nil {
-		panic(err)
-	}
-
-	// Enter some new code in text box.
-	err = elem.SendKeys(`
-		package main
-		import "fmt"
-
-		func main() {
-			fmt.Println("Hello WebDriver!\n")
-		}
-	`)
-	if err != nil {
-		panic(err)
-	}
-
-	// Click the run button.
-	btn, err := wd.FindElement(selenium.ByCSSSelector, "#run")
-	if err != nil {
-		panic(err)
-	}
-	if err := btn.Click(); err != nil {
-		panic(err)
-	}
-
-	// Wait for the program to finish running and get the output.
-	outputDiv, err := wd.FindElement(selenium.ByCSSSelector, "#output")
-	if err != nil {
-		panic(err)
-	}
-
-	var output string
-	for {
-		output, err = outputDiv.Text()
-		if err != nil {
-			panic(err)
-		}
-		if output != "Waiting for remote server..." {
-			break
-		}
-		time.Sleep(time.Millisecond * 100)
-	}
-
-	fmt.Printf("%s", strings.Replace(output, "\n\n", "\n", -1))
-
-	// Example Output:
-	// Hello WebDriver!
-	//
-	// Program exited.
 
 	uniqueId := random.UniqueId()
 	// convert unique ID to lowercase since s3 buckets don't accept uppercase
@@ -133,6 +73,28 @@ func TestFrontend(t *testing.T) {
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
+	if err := wd.Get(websiteEndpoint); err != nil {
+		panic(err)
+	}
+
+	// Get a reference to the text box containing code.
+	elem, err := wd.FindElement(selenium.ByCSSSelector, "#projects")
+	if err != nil {
+		panic(err)
+	}
+
+	output, err = elem.Text()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%s", strings.Replace(output, "\n\n", "\n", -1))
+
+	// Example Output:
+	// Hello WebDriver!
+	//
+	// Program exited.
+
 }
 
 func validateHtml(statusCode int, body string) bool {
@@ -151,4 +113,28 @@ func validateHtml(statusCode int, body string) bool {
 
 	// could validate body here
 	return true
+}
+
+func SetupSelenium() {
+	service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
+    if err != nil {
+        panic(err)
+    }
+    defer service.Stop()
+
+    caps := selenium.Capabilities{}
+    caps.AddChrome(chrome.Capabilities{Args: []string{
+        "window-size=1920x1080",
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "disable-gpu",
+        "--headless",  // comment out this line to see the browser
+    }})
+
+    wd, err := selenium.NewRemote(caps, "")
+    if err != nil {
+        panic(err)
+    }
+
+	return wd
 }
