@@ -61,14 +61,14 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 resource "aws_s3_object" "index" {
   bucket = aws_s3_bucket.application.bucket
-
+  key    = "index.html"
   source = "${path.module}/src/${local.build_folder}/index.html"
   etag   = filemd5("${path.module}/src/${local.build_folder}/index.html")
 
   content_type = "text/html"
 }
 
-# resource "aws_s3_object" "application" "assets" {
+# resource "aws_s3_object" "assets" {
 #   for_each = fileset("${path.module}/src/${local.build_folder}/assets", "*")
 #   key      = each.value
 #   source   = "${path.module}/src/${local.build_folder}/assets/${each.value}"
