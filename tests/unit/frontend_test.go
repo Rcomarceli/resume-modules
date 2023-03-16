@@ -54,7 +54,7 @@ func validateHtml(statusCode int, body string) bool {
 		return false
 
 		// if we get a website, ensure its our website and not cloudflares
-		if !strings.Contains(body, "Roy") {
+		if !strings.Contains(body, "wenufcwenuweuoenwonc") {
 			return false
 		}
 	}
