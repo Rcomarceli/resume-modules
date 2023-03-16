@@ -55,6 +55,18 @@ func validateHtml(statusCode int, body string) bool {
 	}
 	
 	// if we get a website, ensure its our website and not cloudflares
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+    if err != nil {
+        panic(err)
+    }
+
+    // Find the specific element(s) you're interested in
+    doc.Find(".card-description").Each(func(i int, s *goquery.Selection) {
+        // Extract the content or attributes of the element(s)
+        content := s.Text()
+        fmt.Println(content)
+    })
+
 	if !strings.Contains(body, "rcomarceli@gmail.com") {
 		return false
 	}
