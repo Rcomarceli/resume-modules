@@ -76,8 +76,8 @@ function Navbar(props: { onClick: React.MouseEventHandler<HTMLElement> }) {
         <span className="contact-me">contact me</span>
         <ul>
           <li>
-            <a href="mailto:rcomarceli@gmail.com" onClick={props.onClick}>
-              rcomarceli@gmail.com
+            <a id="email-link-for-testing" href="mailto:rcomarceli@gmail.com" onClick={props.onClick}>
+              rcomarceli@gmail.com2
             </a>
           </li>
         </ul>

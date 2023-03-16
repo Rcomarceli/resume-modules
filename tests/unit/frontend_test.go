@@ -11,37 +11,18 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/gruntwork-io/terratest/modules/logger"
 
-	"github.com/tebeka/selenium"
-	"github.com/tebeka/selenium/chrome"
+	"github.com/chromedp/chromedp"
+	"context"
 )
 
 // we will override terraform variables with github secrets for testing
 func TestFrontend(t *testing.T) {
 	t.Parallel()
 
-	wd := SetupSelenium();
-
-	// service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
-    // if err != nil {
-    //     panic(err)
-    // }
-    // defer service.Stop()
-
-    // caps := selenium.Capabilities{}
-    // caps.AddChrome(chrome.Capabilities{Args: []string{
-    //     "window-size=1920x1080",
-    //     "--no-sandbox",
-    //     "--disable-dev-shm-usage",
-    //     "disable-gpu",
-    //     "--headless",  // comment out this line to see the browser
-    // }})
-
-    // wd, err := selenium.NewRemote(caps, "")
-    // if err != nil {
-    //     panic(err)
-    // }
-
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
 
 	uniqueId := random.UniqueId()
 	// convert unique ID to lowercase since s3 buckets don't accept uppercase
@@ -73,28 +54,10 @@ func TestFrontend(t *testing.T) {
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
-	if err := wd.Get(url); err != nil {
-		panic(err)
-	}
+	validationstr := "rcomarceli@gmail.com"
+	targetId := "#email-link-for-testing"
 
-	// Get a reference to the text box containing code.
-	elem, err := wd.FindElement(selenium.ByCSSSelector, "#projects")
-	if err != nil {
-		panic(err)
-	}
-
-	output, err = elem.Text()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("%s", strings.Replace(output, "\n\n", "\n", -1))
-
-	// Example Output:
-	// Hello WebDriver!
-	//
-	// Program exited.
-
+	validateBody(t, ctx, url, targetId, validationstr)
 }
 
 func validateHtml(statusCode int, body string) bool {
@@ -104,37 +67,22 @@ func validateHtml(statusCode int, body string) bool {
 	
 	// if we get a website, ensure its our website and not cloudflares
 
-    // Find the specific element(s) you're interested in
-
-
-	// if !strings.Contains(body, "rcomarceli@gmail.com") {
-	// 	return false
-	// }
-
-	// could validate body here
 	return true
 }
 
-func SetupSelenium() selenium.WebDriver {
-	service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
-    if err != nil {
-        panic(err)
-    }
-    defer service.Stop()
+func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId string, validationstr string) {
+	var innerHTML string
+	logger.Logf(t, "Opening headless browser to %s, searching for string %s, at id %s", urlstr, validationstr, targetId)
+	if err := chromedp.Run(ctx,
+		chromedp.Navigate(urlstr),
+		chromedp.InnerHTML(targetId, &innerHTML, chromedp.ByID),
+	); err != nil {
+		t.Fatal(err)
+	}
 
-    caps := selenium.Capabilities{}
-    caps.AddChrome(chrome.Capabilities{Args: []string{
-        "window-size=1920x1080",
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
-        "disable-gpu",
-        "--headless",  // comment out this line to see the browser
-    }})
+	fmt.Println(innerHTML == validationstr)
 
-    wd, err := selenium.NewRemote(caps, "")
-    if err != nil {
-        panic(err)
-    }
-
-	return wd
+	if (innerHTML != validationstr) {
+		t.Fatal(fmt.Sprintf("body HTML doesnt match target string %s!", validationstr))
+	}
 }
