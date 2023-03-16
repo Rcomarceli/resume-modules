@@ -59,7 +59,7 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 }
 
-resource "aws_s3_object" "application" "index" {
+resource "aws_s3_object" "index" {
   bucket = aws_s3_bucket.application.bucket
 
   source = "${path.module}/src/${local.build_folder}/index.html"
