@@ -46,3 +46,5 @@ dist-ssr
 
 .env.*
 .env
+tests/unit/selenium_deps/*
+!tests/unit/selenium_deps/init.go

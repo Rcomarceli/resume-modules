@@ -3,22 +3,26 @@ module github.com/Rcomarceli/resume-modules
 go 1.20
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.1
+	cloud.google.com/go/storage v1.10.0
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/google/go-github/v27 v27.0.4
 	github.com/gruntwork-io/terratest v0.41.10
+	github.com/tebeka/selenium v0.9.9
+	google.golang.org/api v0.47.0
 )
 
 require (
 	cloud.google.com/go v0.83.0 // indirect
-	cloud.google.com/go/storage v1.10.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.40.56 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
+	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -50,7 +54,6 @@ require (
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.1.12 // indirect
-	google.golang.org/api v0.47.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
 	google.golang.org/grpc v1.38.0 // indirect

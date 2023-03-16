@@ -52,6 +52,9 @@ jobs:
       - name: Download Go Modules for Unit Tests
         working-directory: tests/unit
         run: go mod download
+      - name: Download Selenium Dependencies
+        working-directory: tests/unit/selenium_deps
+        run: go run init.go --alsologtostderr  --download_browsers --download_latest
       - name: Run Unit Tests
         working-directory: tests/unit
         run: go test -v -tags=unit
