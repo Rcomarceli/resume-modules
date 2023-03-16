@@ -56,12 +56,12 @@ jobs:
       - name: Download Latest Chrome
         uses: browser-actions/setup-chrome@v1
 
-      - Name: Check Chrome version
+      - name: Check Chrome version
         run: chrome --version
 
       - name: Download Selenium Dependencies
         working-directory: tests/unit/selenium_deps
-        run: go run init.go --alsologtostderr  --download_latest #--download_browsers --download_latest
+        run: go run init.go --alsologtostderr  #--download_latest #--download_browsers --download_latest
 
       - name: Run Unit Tests
         working-directory: tests/unit
