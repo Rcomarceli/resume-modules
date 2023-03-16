@@ -57,7 +57,7 @@ func validateHtml(statusCode int, body string) bool {
 	}
 	
 	// if we get a website, ensure its our website and not cloudflares
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(body)
     if err != nil {
         panic(err)
     }
