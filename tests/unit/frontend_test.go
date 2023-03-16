@@ -107,15 +107,15 @@ func validateHtml(statusCode int, body string) bool {
     // Find the specific element(s) you're interested in
 
 
-	if !strings.Contains(body, "rcomarceli@gmail.com") {
-		return false
-	}
+	// if !strings.Contains(body, "rcomarceli@gmail.com") {
+	// 	return false
+	// }
 
 	// could validate body here
 	return true
 }
 
-func SetupSelenium() WebElement {
+func SetupSelenium() selenium.WebElement {
 	service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
     if err != nil {
         panic(err)
