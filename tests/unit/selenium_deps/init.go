@@ -44,7 +44,6 @@ const (
 	desiredFirefoxVersion = "68.0.1"
 )
 
-gs://chromium-browser-snapshots/Linux_x64/1087181/chrome-linux.zip attrs: storage: object doesn't exist
 
 var (
 	downloadBrowsers = flag.Bool("download_browsers", true, "If true, download the Firefox and Chrome browsers.")
