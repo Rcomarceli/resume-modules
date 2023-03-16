@@ -73,7 +73,7 @@ func TestFrontend(t *testing.T) {
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
-	if err := wd.Get(websiteEndpoint); err != nil {
+	if err := wd.Get(url); err != nil {
 		panic(err)
 	}
 
