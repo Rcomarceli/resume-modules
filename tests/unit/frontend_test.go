@@ -115,7 +115,7 @@ func validateHtml(statusCode int, body string) bool {
 	return true
 }
 
-func SetupSelenium() selenium.WebElement {
+func SetupSelenium() selenium.WebDriver {
 	service, err := selenium.NewChromeDriverService("./selenium_deps/chromedriver", 4444)
     if err != nil {
         panic(err)
