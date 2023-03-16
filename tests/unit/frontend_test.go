@@ -11,6 +11,8 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // we will override terraform variables with github secrets for testing
