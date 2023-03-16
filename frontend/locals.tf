@@ -6,4 +6,6 @@ locals {
     js   = "text/javascript",
     css  = "text/css"
   }
+
+  build_folder = "dist"
 }

@@ -59,34 +59,15 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 }
 
-
-# this basically forces the code to only run on linux
-# generates env file for our vite build. used to inject the api_url when building in the pipeline
-# outputs a "dest" value that points to our "dist" build folder
-data "external" "application" {
-  program = ["bash", "-c", <<EOT
-  echo "VITE_API_URL=$(jq -r '.API_URL')" > .env.local && (npm ci && npm run build) >&2 && echo "{\"dest\": \"dist\"}"
-  EOT
-  ]
-  working_dir = "${path.module}/src/"
-  query = {
-    API_URL = var.api_url
-  }
-}
-
-
-
-
 resource "aws_s3_bucket_object" "application" {
-  for_each = fileset("${data.external.application.working_dir}/${data.external.application.result.dest}", "*")
+  for_each = fileset("${path.module}/src/${local.build_folder}", "*")
   key      = each.value
-  source   = "${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}"
+  source   = "${path.module}/src/${local.build_folder}/${each.value}"
   bucket   = aws_s3_bucket.application.bucket
 
-  etag = filemd5("${data.external.application.working_dir}/${data.external.application.result.dest}/${each.value}")
+  etag = filemd5("${path.module}/src/${local.build_folder}/${each.value}")
 
   # compare file extension to known file extension mime types, default to application/octet if not found
   content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
 }
 
-# source: https://advancedweb.hu/how-to-deploy-a-single-page-application-with-terraform/

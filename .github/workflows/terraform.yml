@@ -25,7 +25,11 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive
 
-      - name: Run GO Unit Tests
+      - name: Build Website
+        working-directory: ./frontend/src
+        run: npm run build
+
+      - name: Setup Go
         uses: actions/setup-go@v1
         with:
           go-version: 1.20

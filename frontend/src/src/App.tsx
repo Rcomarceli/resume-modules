@@ -24,7 +24,7 @@ const gitHubUrl = "https://github.com/Rcomarceli";
 
 const resumeArticleUrl = "https://www.linkedin.com/pulse/cloud-resume-challenge-how-i-used-terraform-aws-deploy-roy-marcelino/"
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = `${import.meta.env.VITE_DOMAIN_NAME}/api`;
 
 interface NavButtonProps {
   children?: ReactNode;
