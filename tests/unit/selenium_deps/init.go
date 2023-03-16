@@ -36,13 +36,15 @@ const (
 	// See https://omahaproxy.appspot.com for a list of current releases.
 	//
 	// Update this periodically.
-	desiredChromeBuild = "1087181" // This corresponds to version 76.0.3809.0
+	desiredChromeBuild = "1097615" // This corresponds to version 76.0.3809.0
 
 	// desiredFirefoxVersion is the known version of Firefox to download.
 	//
 	// Update this periodically.
 	desiredFirefoxVersion = "68.0.1"
 )
+
+gs://chromium-browser-snapshots/Linux_x64/1087181/chrome-linux.zip attrs: storage: object doesn't exist
 
 var (
 	downloadBrowsers = flag.Bool("download_browsers", true, "If true, download the Firefox and Chrome browsers.")

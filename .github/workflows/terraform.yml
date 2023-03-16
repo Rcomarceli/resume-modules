@@ -53,11 +53,11 @@ jobs:
         working-directory: tests/unit
         run: go mod download
 
-      - name: Download Latest Chrome
-        uses: browser-actions/setup-chrome@v1
+      # - name: Download Latest Chrome
+      #   uses: browser-actions/setup-chrome@v1
 
-      - name: Check Chrome version
-        run: chrome --version
+      # - name: Check Chrome version
+      #   run: chrome --version
 
       - name: Download Selenium Dependencies
         working-directory: tests/unit/selenium_deps
