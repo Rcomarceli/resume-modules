@@ -25,6 +25,10 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive
 
+      - name: Download Website Dependencies
+        working-directory: ./frontend/src
+        name: npm ci
+
       - name: Build Website
         working-directory: ./frontend/src
         run: npm run build
