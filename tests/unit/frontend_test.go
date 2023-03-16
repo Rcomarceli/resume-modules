@@ -52,13 +52,13 @@ func TestFrontend(t *testing.T) {
 func validateHtml(statusCode int, body string) bool {
 	if statusCode != 200 {
 		return false
-
-		// if we get a website, ensure its our website and not cloudflares
-		if !strings.Contains(body, "wenufcwenuweuoenwonc") {
-			return false
-		}
 	}
 	
+	// if we get a website, ensure its our website and not cloudflares
+	if !strings.Contains(body, "rcomarceli@gmail.com") {
+		return false
+	}
+
 	// could validate body here
 	return true
 }

@@ -59,15 +59,24 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 }
 
-resource "aws_s3_object" "application" {
-  for_each = fileset("${path.module}/src/${local.build_folder}", "*")
-  key      = each.value
-  source   = "${path.module}/src/${local.build_folder}/${each.value}"
-  bucket   = aws_s3_bucket.application.bucket
+resource "aws_s3_object" "application" "index" {
+  bucket = aws_s3_bucket.application.bucket
 
-  etag = filemd5("${path.module}/src/${local.build_folder}/${each.value}")
+  source = "${path.module}/src/${local.build_folder}/index.html"
+  etag   = filemd5("${path.module}/src/${local.build_folder}/index.html")
 
-  # compare file extension to known file extension mime types, default to application/octet if not found
-  content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
+  content_type = "text/html"
 }
+
+# resource "aws_s3_object" "application" "assets" {
+#   for_each = fileset("${path.module}/src/${local.build_folder}/assets", "*")
+#   key      = each.value
+#   source   = "${path.module}/src/${local.build_folder}/assets/${each.value}"
+#   bucket   = aws_s3_bucket.application.bucket
+
+#   etag = filemd5("${path.module}/src/${local.build_folder}/assets/${each.value}")
+
+#   # compare file extension to known file extension mime types, default to application/octet if not found
+#   content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
+# }
 
