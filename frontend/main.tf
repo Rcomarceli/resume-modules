@@ -59,7 +59,7 @@ resource "aws_s3_bucket_website_configuration" "application" {
 
 }
 
-resource "aws_s3_bucket_object" "application" {
+resource "aws_s3_object" "application" {
   for_each = fileset("${path.module}/src/${local.build_folder}", "*")
   key      = each.value
   source   = "${path.module}/src/${local.build_folder}/${each.value}"
