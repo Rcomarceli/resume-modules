@@ -31,7 +31,7 @@ jobs:
 
       - name: Create Env file 
         working-directory: ./frontend/src
-        npm: echo "VITE_DOMAIN_NAME=insertdomainnamehere.local" > .env
+        run: echo "VITE_DOMAIN_NAME=insertdomainnamehere.local" > .env
 
       - name: Build Website
         working-directory: ./frontend/src
