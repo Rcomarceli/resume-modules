@@ -70,7 +70,7 @@ resource "aws_s3_object" "index" {
 
 resource "aws_s3_object" "assets" {
   for_each = fileset("${path.module}/src/${local.build_folder}/assets", "*")
-  key      = each.value
+  key      = "assets/${each.value}"
   source   = "${path.module}/src/${local.build_folder}/assets/${each.value}"
   bucket   = aws_s3_bucket.application.bucket
 
