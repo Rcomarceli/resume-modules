@@ -68,15 +68,15 @@ resource "aws_s3_object" "index" {
   content_type = "text/html"
 }
 
-# resource "aws_s3_object" "assets" {
-#   for_each = fileset("${path.module}/src/${local.build_folder}/assets", "*")
-#   key      = each.value
-#   source   = "${path.module}/src/${local.build_folder}/assets/${each.value}"
-#   bucket   = aws_s3_bucket.application.bucket
+resource "aws_s3_object" "assets" {
+  for_each = fileset("${path.module}/src/${local.build_folder}/assets", "*")
+  key      = each.value
+  source   = "${path.module}/src/${local.build_folder}/assets/${each.value}"
+  bucket   = aws_s3_bucket.application.bucket
 
-#   etag = filemd5("${path.module}/src/${local.build_folder}/assets/${each.value}")
+  etag = filemd5("${path.module}/src/${local.build_folder}/assets/${each.value}")
 
-#   # compare file extension to known file extension mime types, default to application/octet if not found
-#   content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
-# }
+  # compare file extension to known file extension mime types, default to application/octet if not found
+  content_type = lookup(local.mime_type_mappings, regex("[^.]+$", each.value), "application/octet-stream")
+}
 
