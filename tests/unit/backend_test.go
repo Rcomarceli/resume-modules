@@ -19,6 +19,7 @@ func TestBackend(t *testing.T) {
 
 	// append unique names to given variables for terraform
 	uniqueVars := map[string]interface{}{
+		"environment":         "sandbox",
 		"lambda_bucket_name":     "backend",
 		"function_name":          "updatevisitorcounter",
 		"lambda_iam_role_name":   "iamrolename",
