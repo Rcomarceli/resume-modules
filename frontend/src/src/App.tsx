@@ -9,7 +9,7 @@ import { workExperienceData } from './workexperience';
 import { educationData } from './education';
 
 import ccnaBadge from './assets/ccna.png';
-import secplusBadge from './assets/securityplus.svg';
+import secplusBadge from './assets/secplus.png';
 import watchguardBadge from './assets/watchguardBadge.png';
 import awsccpBadge from './assets/aws-ccp.png';
 import jlptBadge from './assets/jlpt.png';
