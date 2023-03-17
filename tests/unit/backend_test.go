@@ -42,7 +42,6 @@ func TestBackend(t *testing.T) {
 
 	otherVars := map[string]interface{}{
 		"scope_permissions_arn": "arn:aws:iam::681163022059:policy/ScopePermissions",
-		"cloudflare_domain":     "bad_domain",
 		"environment":           "sandbox",
 		"cloudflare_api_token":  os.Getenv("CLOUDFLARE_API_TOKEN"),
 		"cloudflare_zone_id":    os.Getenv("CLOUDFLARE_ZONE_ID"),
