@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 	"time"
-
+	"os"
 	"strings"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
@@ -19,6 +19,7 @@ func TestBackend(t *testing.T) {
 
 	// append unique names to given variables for terraform
 	uniqueVars := map[string]interface{}{
+		"environment":         "sandbox",
 		"lambda_bucket_name":     "backend",
 		"function_name":          "updatevisitorcounter",
 		"lambda_iam_role_name":   "iamrolename",
@@ -41,8 +42,11 @@ func TestBackend(t *testing.T) {
 
 	otherVars := map[string]interface{}{
 		"scope_permissions_arn": "arn:aws:iam::681163022059:policy/ScopePermissions",
-		"cloudflare_domain":     "bad_domain",
 		"environment":           "sandbox",
+		"cloudflare_api_token":  os.Getenv("CLOUDFLARE_API_TOKEN"),
+		"cloudflare_zone_id":    os.Getenv("CLOUDFLARE_ZONE_ID"),
+		"cloudflare_domain":     os.Getenv("CLOUDFLARE_DOMAIN"),
+		"cloudflare_account_id": os.Getenv("CLOUDFLARE_ACCOUNT_ID"),
 	}
 
 	// then combine all needed variables to pass to terratest terraformOptions

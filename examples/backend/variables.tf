@@ -63,3 +63,18 @@ variable "lambda_permission_name" {
   description = "Name for lambda permission"
   type        = string
 }
+
+variable "cloudflare_api_token" {
+  description = "API Token used for Cloudflare"
+  type        = string
+}
+
+variable "cloudflare_zone_id" {
+  description = "Zone ID for Cloudflare Domain"
+  type        = string
+}
+
+variable "cloudflare_account_id" {
+  description = "The account ID for Cloudflare"
+  type        = string
+}

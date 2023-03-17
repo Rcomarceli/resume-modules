@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/archive"
       version = "~> 2.2"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -208,3 +212,23 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
 
+# cloudflare worker for api url
+resource "cloudflare_worker_script" "api_reverseproxy" {
+  account_id = var.cloudflare_account_id
+  name       = "terraform-change-resume-host-header-${var.environment}"
+  content    = file("${path.module}/cloudflare_worker/api_reverseproxy.js")
+
+  plain_text_binding {
+    name = "api_endpoint"
+    text = "${aws_apigatewayv2_stage.lambda.invoke_url}/${var.update_visitor_counter_path}"
+  }
+}
+
+resource "cloudflare_worker_route" "api_reverseproxy" {
+  zone_id     = var.cloudflare_zone_id
+  pattern     = "${var.cloudflare_domain}/*"
+  script_name = cloudflare_worker_script.api_reverseproxy.name
+}
+
+# set env variable to api url
+# we need to know the domain name
