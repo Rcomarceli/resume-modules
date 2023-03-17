@@ -215,7 +215,7 @@ resource "aws_lambda_permission" "api_gw" {
 # cloudflare worker for api url
 resource "cloudflare_worker_script" "api_reverseproxy" {
   account_id = var.cloudflare_account_id
-  name       = "terraform-change-resume-host-header-${var.environment}"
+  name       = "terraform-api-reverseproxy-${var.environment}"
   content    = file("${path.module}/cloudflare_worker/api_reverseproxy.js")
 
   plain_text_binding {
