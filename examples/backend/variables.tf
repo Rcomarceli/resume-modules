@@ -65,7 +65,7 @@ variable "lambda_permission_name" {
 }
 
 variable "cloudflare_api_token" {
-  description = "API Token used for CLoudflare"
+  description = "API Token used for Cloudflare"
   type        = string
 }
 
