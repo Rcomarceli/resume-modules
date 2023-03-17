@@ -25,17 +25,9 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive
 
-      - name: Download Website Dependencies
+      - name: Download Website Dependencies and Build
         working-directory: ./frontend/src
-        run: npm ci
-
-      - name: Create Env file 
-        working-directory: ./frontend/src
-        run: echo "VITE_DOMAIN_NAME=insertdomainnamehere.local" > .env
-
-      - name: Build Website
-        working-directory: ./frontend/src
-        run: npm run build
+        run: npm ci && npm run build
 
       - name: Setup Go
         uses: actions/setup-go@v1

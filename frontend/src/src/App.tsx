@@ -24,7 +24,8 @@ const gitHubUrl = "https://github.com/Rcomarceli";
 
 const resumeArticleUrl = "https://www.linkedin.com/pulse/cloud-resume-challenge-how-i-used-terraform-aws-deploy-roy-marcelino/"
 
-const API_URL = `${import.meta.env.VITE_DOMAIN_NAME}/api`;
+const API_PATH = "api"
+
 
 interface NavButtonProps {
   children?: ReactNode;
@@ -280,9 +281,9 @@ function useWindowSize(): Size {
 
 function VisitorCounter() {
   const [visitorCount, setVisitorCount] = useState<number>();
-
+  
   async function submit() {
-    let res = await fetch(API_URL, {method: 'POST'});
+    let res = await fetch(API_PATH, {method: 'POST'});
     if (res) {
       let data = await res.json();
       setVisitorCount(data);
