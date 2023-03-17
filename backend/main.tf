@@ -226,7 +226,7 @@ resource "cloudflare_worker_script" "api_reverseproxy" {
 
 resource "cloudflare_worker_route" "api_reverseproxy" {
   zone_id     = var.cloudflare_zone_id
-  pattern     = "${var.cloudflare_domain}/*"
+  pattern     = "${var.cloudflare_domain}/api"
   script_name = cloudflare_worker_script.api_reverseproxy.name
 }
 
