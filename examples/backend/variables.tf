@@ -74,11 +74,6 @@ variable "cloudflare_zone_id" {
   type        = string
 }
 
-variable "cloudflare_domain" {
-  description = "Domain name to be used for accessing the website"
-  type        = string
-}
-
 variable "cloudflare_account_id" {
   description = "The account ID for Cloudflare"
   type        = string
