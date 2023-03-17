@@ -22,19 +22,11 @@
 }
 
 :root {
-  --nav-size: 60px;
-  --white: #e6f1ff;
   --gold: #ffbe4d;
   --border-radius: 4px;
   --black: #161922;
   --black2: #333333;
   --black3: #090c14;
-  --fz-xs: 13px;
-  --font-mono: 'SF Mono','Fira Code','Fira Mono','Roboto Mono',monospace;
-  --lightest-navy: #233554;
-  --tab-height: 42px;
-  --tab-width: 120px;
-  --speed: 500ms;
 }
 
 a {
