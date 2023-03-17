@@ -27,6 +27,10 @@ func TestBackend(t *testing.T) {
 		"api_gateway_stage_name": "v1",
 		"lambda_permission_name": "lambdapermission",
 		"database_name":          "website-db",
+		"cloudflare_api_token":  os.Getenv("CLOUDFLARE_API_TOKEN"),
+		"cloudflare_zone_id":    os.Getenv("CLOUDFLARE_ZONE_ID"),
+		"cloudflare_domain":     os.Getenv("CLOUDFLARE_DOMAIN"),
+		"cloudflare_account_id": os.Getenv("CLOUDFLARE_ACCOUNT_ID"),
 	}
 	uniqueId := random.UniqueId()
 	prefix := "terratest"
