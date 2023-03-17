@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 	"time"
-
+	"os"
 	"strings"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
