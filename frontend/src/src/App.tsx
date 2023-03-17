@@ -296,7 +296,7 @@ function VisitorCounter() {
 
   return(
     <div className="visitorCounter">
-      <p>visitor count: {visitorCount}</p>
+      <p>visitor count: <span data-cy="visitorCount">{visitorCount}</span></p>
     </div>
   )
 }
