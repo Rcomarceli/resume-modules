@@ -6,6 +6,7 @@ import (
 	"time"
 	"os"
 	"strings"
+	"strconv"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
@@ -108,7 +109,7 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
 		chromedp.InnerHTML(targetId, &innerHTML, chromedp.ByID),
-		chromedp.AttributeValue(`[data-cy="visitorcount"]`, "value", &visitorCount1, chromedp.ByQuery),
+		chromedp.InnerHTML(`[data-cy="visitorcount"]`, &visitorCount1, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
 	}
@@ -122,7 +123,7 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	// second visit: verify if the visitor count has incremented correctly
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
-		chromedp.AttributeValue(`[data-cy="visitorcount"]`, "value", &visitorCount2, chromedp.ByQuery),
+		chromedp.InnerHTML(`[data-cy="visitorcount"]`, &visitorCount2, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
 	}
