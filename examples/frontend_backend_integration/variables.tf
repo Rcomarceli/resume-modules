@@ -13,11 +13,6 @@ variable "website_bucket_name" {
   type        = string
 }
 
-variable "api_url" {
-  description = "API URL for incrementing visitor counter. Rendered into index.html"
-  type        = string
-}
-
 variable "allowed_ip_range" {
   description = "The allowed IP range to the website S3 bucket. By default, uses allowed IPs from Cloudflare"
   type        = list(string)

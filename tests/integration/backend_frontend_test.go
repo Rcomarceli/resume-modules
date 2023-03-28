@@ -19,9 +19,12 @@ import (
 )
 
 // we will override terraform variables with github secrets for testing
-// going to need to specify source in frontend module..?
-// need to solve how we're going to build it
-func TestFrontend(t *testing.T) {
+// wip:
+// api url relies on cloudflare workers so we need to include DNS in this integration test as well
+// improve local iteration setup (should take priority)
+
+
+func TestFrontendBackend(t *testing.T) {
 	t.Parallel()
 
 	ctx, cancel := chromedp.NewContext(context.Background())
