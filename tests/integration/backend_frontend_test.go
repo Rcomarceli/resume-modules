@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 	"time"
-
+	"os"
 	"strings"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
@@ -99,26 +99,16 @@ func TestFrontend(t *testing.T) {
 	validateBody(t, ctx, url, targetId, validationstr)
 }
 
-func validateHtml(statusCode int, body string) bool {
-	if statusCode != 200 {
-		return false
-	}
-	
-	// if we get a website, ensure its our website and not cloudflares
-
-	return true
-}
-
 func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId string, validationstr string) {
 	var innerHTML string
-	var previousVisitorCount string
-	var nextVisitorCount string
+	var visitorCount1 string
+	var visitorCount2 string
 
 	logger.Logf(t, "Opening headless browser to %s, searching for string %s, at id %s", urlstr, validationstr, targetId)
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
 		chromedp.InnerHTML(targetId, &innerHTML, chromedp.ByID),
-		chromedp.AttributeValue(`[data-cy="visitorcount"]`, "value", &visitorCount, chromedp.ByQuery),
+		chromedp.AttributeValue(`[data-cy="visitorcount"]`, "value", &visitorCount1, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
 	}
