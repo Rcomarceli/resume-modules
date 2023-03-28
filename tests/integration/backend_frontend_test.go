@@ -111,10 +111,14 @@ func validateHtml(statusCode int, body string) bool {
 
 func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId string, validationstr string) {
 	var innerHTML string
+	var previousVisitorCount string
+	var nextVisitorCount string
+
 	logger.Logf(t, "Opening headless browser to %s, searching for string %s, at id %s", urlstr, validationstr, targetId)
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
 		chromedp.InnerHTML(targetId, &innerHTML, chromedp.ByID),
+		chromedp.AttributeValue(`[data-cy="visitorcount"]`, "value", &visitorCount, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
 	}
@@ -124,4 +128,26 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	if (innerHTML != validationstr) {
 		t.Fatal(fmt.Sprintf("body HTML doesnt match target string %s!", validationstr))
 	}
+
+	// second visit: verify if the visitor count has incremented correctly
+	if err := chromedp.Run(ctx,
+		chromedp.Navigate(urlstr),
+		chromedp.AttributeValue(`[data-cy="visitorcount"]`, "value", &visitorCount2, chromedp.ByQuery),
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	count1, err := strconv.Atoi(visitorCount1)
+	if err != nil {
+		t.Fatalf("Failed to convert visitor count 1 to integer: %v", err)
+	}
+	count2, err := strconv.Atoi(visitorCount2)
+	if err != nil {
+		t.Fatalf("Failed to convert visitor count 2 to integer: %v", err)
+	}
+
+	if count2 <= count1 {
+		t.Fatalf("Visitor count did not increment between visits!")
+	}
+
 }
