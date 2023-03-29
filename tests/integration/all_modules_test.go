@@ -175,6 +175,11 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
 		chromedp.InnerHTML(targetId, &innerHTML, chromedp.ByID),
+		// wait 4 seconds for api call to finish
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			time.Sleep(4 * time.Second)
+			return nil
+		}),
 		chromedp.InnerHTML(`[data-cy="visitorCount"]`, &visitorCount1, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
@@ -190,6 +195,11 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	// second visit: verify if the visitor count has incremented correctly
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
+		// wait 4 seconds for api call to finish
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			time.Sleep(4 * time.Second)
+			return nil
+		}),
 		chromedp.InnerHTML(`[data-cy="visitorCount"]`, &visitorCount2, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
