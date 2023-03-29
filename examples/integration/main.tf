@@ -45,6 +45,18 @@ resource "random_pet" "lambda_bucket_name" {
   length = 3
 }
 
+terraform {
+
+  cloud {
+    organization = "rcomarceli-tutorial"
+
+    workspaces {
+      name = "terratest-integration-resume"
+    }
+  }
+}
+
+
 module "frontend" {
   source = "../../frontend"
 

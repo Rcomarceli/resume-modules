@@ -41,6 +41,18 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
+terraform {
+
+  cloud {
+    organization = "rcomarceli-tutorial"
+
+    workspaces {
+      name = "terratest-resume-dns"
+    }
+  }
+}
+
+
 module "frontend" {
   source = "../../frontend"
 

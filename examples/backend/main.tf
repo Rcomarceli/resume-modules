@@ -33,6 +33,18 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+
+  cloud {
+    organization = "rcomarceli-tutorial"
+
+    workspaces {
+      name = "terratest-resume-backend"
+    }
+  }
+}
+
+
 resource "random_pet" "lambda_bucket_name" {
   prefix = var.lambda_bucket_name
   length = 3
