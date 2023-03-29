@@ -24,17 +24,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-terraform {
-
-  cloud {
-    organization = "rcomarceli-tutorial"
-
-    workspaces {
-      name = "terratest-resume-frontend"
-    }
-  }
-}
-
 
 resource "random_pet" "website_bucket_name" {
   prefix = var.website_bucket_name
