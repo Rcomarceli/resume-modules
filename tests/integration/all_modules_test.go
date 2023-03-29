@@ -6,7 +6,7 @@ import (
 	"time"
 	"os"
 	"strings"
-	// "strconv"
+	"strconv"
 
 	"net/http"
 
@@ -168,8 +168,8 @@ func validateHtml(statusCode int, body string) bool {
 
 func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId string, validationstr string) {
 	var innerHTML string
-	// var visitorCount1 string
-	// var visitorCount2 string
+	var visitorCount1 string
+	var visitorCount2 string
 
 	logger.Logf(t, "Opening headless browser to %s, searching for string %s, at id %s", urlstr, validationstr, targetId)
 	if err := chromedp.Run(ctx,
