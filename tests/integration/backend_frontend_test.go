@@ -23,8 +23,9 @@ import (
 // api url relies on cloudflare workers so we need to include DNS in this integration test as well
 // improve local iteration setup (should take priority)
 
+// just combining all tests for dns and www in one here
 
-func TestFrontendBackend(t *testing.T) {
+func TestIntegration(t *testing.T) {
 	t.Parallel()
 
 	ctx, cancel := chromedp.NewContext(context.Background())
@@ -94,14 +95,73 @@ func TestFrontendBackend(t *testing.T) {
 	// Run `terraform output` to get the IP of the instance
 	websiteEndpoint := terraform.Output(t, terraformOptions, "website_endpoint")
 
+	// verify we can access the site through the S3 website bucket endpoint
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
+	
+	// 
+	httpUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+	httpsUrl := fmt.Sprintf("https://%s/", os.Getenv("CLOUDFLARE_DOMAIN"))
+	wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
+
+	// validate http to https redirect
+	verifyRedirect(t, httpUrl, httpsUrl, 30, 5*time.Second)
+
+	// verify www to non-www https redirect
+	verifyRedirect(t, wwwUrl, httpsUrl, 30, 5*time.Second)
+
 	validationstr := "rcomarceli@gmail.com"
 	targetId := "#email-link-for-testing"
-
 	validateBody(t, ctx, url, targetId, validationstr)
 }
+
+func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, retries int, sleepBetweenRetries time.Duration) {
+
+	retry.DoWithRetry(t, fmt.Sprintf("HTTP GET to %s", targetUrl), retries, sleepBetweenRetries, func() (string, error) {
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+
+		response, err := client.Get(targetUrl)
+		if err != nil {
+			return "", NonFatalError{Url: targetUrl, Message: "GET failed"}
+		}
+
+		if response.StatusCode != http.StatusMovedPermanently {
+			return "", NonFatalError{Url: targetUrl, Message: fmt.Sprintf("Wrong status code. Expected %d, got %d", http.StatusMovedPermanently, response.StatusCode)}
+		}
+
+		location := response.Header.Get("Location")
+		if location != expectedRedirectUrl {
+			return "", NonFatalError{Url: targetUrl, Message: fmt.Sprintf("Redirect Url wrong. Expected %s, got %s", expectedRedirectUrl, location)}
+		}
+		defer response.Body.Close()
+
+		return "", err
+	})
+
+}
+
+type NonFatalError struct {
+	Url     string
+	Message string
+}
+
+func (err NonFatalError) Error() string {
+	return fmt.Sprintf("Validation failed for URL %s. Message: %s", err.Url, err.Message)
+}
+
+func validateHtml(statusCode int, body string) bool {
+	if statusCode != 200 {
+		return false
+	}
+	// could validate body here
+	return true
+}
+
 
 func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId string, validationstr string) {
 	var innerHTML string
@@ -145,3 +205,4 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	}
 
 }
+

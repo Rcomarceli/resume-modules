@@ -71,3 +71,21 @@ module "backend" {
   api_gateway_stage_name      = var.api_gateway_stage_name
   lambda_permission_name      = var.lambda_permission_name
 }
+
+module "dns" {
+  source = "../../dns"
+
+  # in live, these are defined in terraform cloud. for testing, we define them via repo secrets/variables
+  environment           = var.environment
+  cloudflare_zone_id    = var.cloudflare_zone_id
+  cloudflare_domain     = var.cloudflare_domain
+  cloudflare_account_id = var.cloudflare_account_id
+  website_endpoint      = module.frontend.website_endpoint
+}
+
+module "www" {
+  source = "../../www"
+
+  cloudflare_zone_id = var.cloudflare_zone_id
+  cloudflare_domain  = var.cloudflare_domain
+}
