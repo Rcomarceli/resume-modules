@@ -2,23 +2,23 @@ package test
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
-	"os"
-	"strings"
-	"strconv"
 
 	"net/http"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
-	"github.com/gruntwork-io/terratest/modules/random"
-	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/retry"
+	"github.com/gruntwork-io/terratest/modules/terraform"
 
-	"github.com/chromedp/chromedp"
 	"context"
+	"github.com/chromedp/chromedp"
 )
 
 // we will override terraform variables with github secrets for testing
@@ -35,7 +35,7 @@ func TestIntegration(t *testing.T) {
 	defer cancel()
 
 	uniqueVars := map[string]interface{}{
-		"environment":         "sandbox",
+		"environment":            "sandbox",
 		"lambda_bucket_name":     "backend",
 		"function_name":          "updatevisitorcounter",
 		"lambda_iam_role_name":   "iamrolename",
@@ -44,7 +44,7 @@ func TestIntegration(t *testing.T) {
 		"api_gateway_stage_name": "v1",
 		"lambda_permission_name": "lambdapermission",
 		"database_name":          "website-db",
-		"website_bucket_name": "frontend-integration",
+		"website_bucket_name":    "frontend-integration",
 		// api_url: specified in terraform example file as an output from backend
 
 	}
@@ -66,7 +66,7 @@ func TestIntegration(t *testing.T) {
 		"cloudflare_zone_id":    os.Getenv("CLOUDFLARE_ZONE_ID"),
 		"cloudflare_domain":     os.Getenv("CLOUDFLARE_DOMAIN"),
 		"cloudflare_account_id": os.Getenv("CLOUDFLARE_ACCOUNT_ID"),
-		"allowed_ip_range":    []string{"0.0.0.0/0"},
+		"allowed_ip_range":      []string{"0.0.0.0/0"},
 	}
 
 	// then combine all needed variables to pass to terratest terraformOptions
@@ -88,7 +88,6 @@ func TestIntegration(t *testing.T) {
 		Vars:         combinedVars,
 	})
 
-
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created.
 	defer terraform.Destroy(t, terraformOptions)
 
@@ -102,8 +101,7 @@ func TestIntegration(t *testing.T) {
 	url := fmt.Sprintf("http://%s", websiteEndpoint)
 	http_helper.HttpGetWithRetryWithCustomValidation(t, url, nil, 10, 5*time.Second, validateHtml)
 
-	
-	// 
+	//
 	httpUrl := fmt.Sprintf("http://%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 	httpsUrl := fmt.Sprintf("https://%s/", os.Getenv("CLOUDFLARE_DOMAIN"))
 	wwwUrl := fmt.Sprintf("http://www.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
@@ -116,7 +114,8 @@ func TestIntegration(t *testing.T) {
 
 	validationstr := "rcomarceli@gmail.com"
 	targetId := "#email-link-for-testing"
-	validateBody(t, ctx, url, targetId, validationstr)
+	// validate body through DNS, as we rely on Cloudflare Edge Workers for backend integration
+	validateBody(t, ctx, httpsUrl, targetId, validationstr)
 }
 
 func verifyRedirect(t *testing.T, targetUrl string, expectedRedirectUrl string, retries int, sleepBetweenRetries time.Duration) {
@@ -165,7 +164,6 @@ func validateHtml(statusCode int, body string) bool {
 	return true
 }
 
-
 func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId string, validationstr string) {
 	var innerHTML string
 	var visitorCount1 string
@@ -188,7 +186,7 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	fmt.Println(innerHTML == validationstr)
 	logger.Logf(t, "visitor count is %s", visitorCount1)
 
-	if (innerHTML != validationstr) {
+	if innerHTML != validationstr {
 		t.Fatal(fmt.Sprintf("body HTML doesnt match target string %s!", validationstr))
 	}
 
@@ -219,4 +217,3 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	}
 
 }
-
