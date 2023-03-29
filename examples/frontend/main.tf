@@ -24,6 +24,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
+
 resource "random_pet" "website_bucket_name" {
   prefix = var.website_bucket_name
   length = 3
