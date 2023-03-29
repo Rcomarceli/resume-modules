@@ -175,38 +175,38 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(urlstr),
 		chromedp.InnerHTML(targetId, &innerHTML, chromedp.ByID),
-		// chromedp.InnerHTML(`[data-cy="visitorcount"]`, &visitorCount1, chromedp.ByQuery),
+		chromedp.InnerHTML(`[data-cy="visitorCount"]`, &visitorCount1, chromedp.ByQuery),
 	); err != nil {
 		t.Fatal(err)
 	}
 
 	fmt.Println(innerHTML == validationstr)
-	// logger.Logf(t, "visitor count is %s", &visitorCount1)
+	logger.Logf(t, "visitor count is %s", &visitorCount1)
 
-	// if (innerHTML != validationstr) {
-	// 	t.Fatal(fmt.Sprintf("body HTML doesnt match target string %s!", validationstr))
-	// }
+	if (innerHTML != validationstr) {
+		t.Fatal(fmt.Sprintf("body HTML doesnt match target string %s!", validationstr))
+	}
 
-	// // second visit: verify if the visitor count has incremented correctly
-	// if err := chromedp.Run(ctx,
-	// 	chromedp.Navigate(urlstr),
-	// 	chromedp.InnerHTML(`[data-cy="visitorcount"]`, &visitorCount2, chromedp.ByQuery),
-	// ); err != nil {
-	// 	t.Fatal(err)
-	// }
+	// second visit: verify if the visitor count has incremented correctly
+	if err := chromedp.Run(ctx,
+		chromedp.Navigate(urlstr),
+		chromedp.InnerHTML(`[data-cy="visitorCount"]`, &visitorCount2, chromedp.ByQuery),
+	); err != nil {
+		t.Fatal(err)
+	}
 
-	// count1, err := strconv.Atoi(visitorCount1)
-	// if err != nil {
-	// 	t.Fatalf("Failed to convert visitor count 1 to integer: %v", err)
-	// }
-	// count2, err := strconv.Atoi(visitorCount2)
-	// if err != nil {
-	// 	t.Fatalf("Failed to convert visitor count 2 to integer: %v", err)
-	// }
+	count1, err := strconv.Atoi(visitorCount1)
+	if err != nil {
+		t.Fatalf("Failed to convert visitor count 1 to integer: %v", err)
+	}
+	count2, err := strconv.Atoi(visitorCount2)
+	if err != nil {
+		t.Fatalf("Failed to convert visitor count 2 to integer: %v", err)
+	}
 
-	// if count2 <= count1 {
-	// 	t.Fatalf("Visitor count did not increment between visits!")
-	// }
+	if count2 <= count1 {
+		t.Fatalf("Visitor count did not increment between visits!")
+	}
 
 }
 
