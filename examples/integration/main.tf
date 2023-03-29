@@ -51,7 +51,7 @@ terraform {
     organization = "rcomarceli-tutorial"
 
     workspaces {
-      name = "terratest-integration-resume"
+      name = "terratest-resume-integration"
     }
   }
 }
