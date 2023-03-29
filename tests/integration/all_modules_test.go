@@ -181,7 +181,7 @@ func validateBody(t *testing.T, ctx context.Context, urlstr string, targetId str
 	}
 
 	fmt.Println(innerHTML == validationstr)
-	logger.Logf(t, "visitor count is %s", &visitorCount1)
+	logger.Logf(t, "visitor count is %s", visitorCount1)
 
 	if (innerHTML != validationstr) {
 		t.Fatal(fmt.Sprintf("body HTML doesnt match target string %s!", validationstr))
