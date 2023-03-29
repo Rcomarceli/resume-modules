@@ -8,11 +8,14 @@ import (
 	"strings"
 	"strconv"
 
+	"net/http"
+
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/retry"
 
 	"github.com/chromedp/chromedp"
 	"context"
@@ -81,7 +84,7 @@ func TestIntegration(t *testing.T) {
 	// retryable errors in terraform testing.
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		// The path to where our Terraform code is located
-		TerraformDir: "../../examples/frontend_backend_integration",
+		TerraformDir: "../../examples/integration",
 		Vars:         combinedVars,
 	})
 
